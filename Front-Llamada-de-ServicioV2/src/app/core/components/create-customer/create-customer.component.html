@@ -1,0 +1,145 @@
+<app-loading></app-loading>
+<app-toasts aria-live="polite" aria-atomic="true"></app-toasts>
+
+<div class="pt-4 px-3">
+  <div class="title-customer">
+    <h4>Cargar nuevo cliente</h4>
+    <i
+      class="fa fa-times"
+      role="button"
+      aria-hidden="true"
+      (click)="dismiss()"
+    ></i>
+  </div>
+
+  <form [formGroup]="newClientForm">
+    <div class="row p-1 px-2">
+      <div class="col-6">
+        <div class="form-group">
+          <label class="pb-1">Apellido y Nombre</label>
+          <input class="form-control p-2" formControlName="CardName" />
+          <app-error-message
+            [field]="$any(newClientForm.get('CardName'))"
+            error="required"
+            message="Apellido y nombre requerido"
+          ></app-error-message>
+        </div>
+      </div>
+      <div class="col-6">
+        <div class="form-group">
+          <label class="pb-1">DNI/CUIT</label>
+          <input class="form-control p-2" formControlName="FederalTaxID" />
+          <app-error-message
+            [field]="$any(newClientForm.get('FederalTaxID'))"
+            error="required"
+            message="DNI/CUIT requerido"
+          ></app-error-message>
+        </div>
+      </div>
+    </div>
+
+    <div class="row p-1 px-2">
+      <div class="col-6">
+        <div class="form-group">
+          <label class="pb-1">Celular</label>
+          <input class="form-control p-2" formControlName="Cellular" />
+          <app-error-message
+            [field]="$any(newClientForm.get('Cellular'))"
+            error="required"
+            message="N° de celular requerido"
+          ></app-error-message>
+        </div>
+      </div>
+      <div class="col-6">
+        <div class="form-group">
+          <label class="pb-1">Email</label>
+          <input class="form-control p-2" formControlName="EmailAddress" />
+          <app-error-message
+            [field]="$any(newClientForm.get('EmailAddress'))"
+            error="required"
+            message="Email requerido"
+          ></app-error-message>
+        </div>
+      </div>
+    </div>
+
+    <div class="row p-1 px-2">
+      <div class="col-6">
+        <div class="form-group">
+          <label class="pb-1">Tipo Cliente</label>
+          <select class="form-control p-2" formControlName="U_B1SYS_VATCtg">
+            <option value="CF">Consumidor Final</option>
+            <option value="EX">Exento</option>
+            <option value="RI">Responsable Inscripto</option>
+            <option value="MT">Monotributo</option>
+          </select>
+          <app-error-message
+            [field]="$any(newClientForm.get('U_B1SYS_VATCtg'))"
+            error="required"
+            message="Tipo de Cliente requerido"
+          ></app-error-message>
+        </div>
+      </div>
+      <div class="col-6">
+        <div class="form-group">
+          <label class="pb-1">Provincia</label>
+          <select id="County" class="form-control p-2" formControlName="County">
+            <option *ngFor="let city of cities" value="{{ city.id }}">
+              {{ city.nombre }}
+            </option>
+          </select>
+          <app-error-message
+            [field]="$any(newClientForm.get('County'))"
+            error="required"
+            message="Provincia requerida"
+          ></app-error-message>
+        </div>
+      </div>
+    </div>
+
+    <div class="row p-1 px-2">
+      <div class="col-6">
+        <div class="form-group">
+          <label class="pb-1">Localidad</label>
+          <input class="form-control p-2" formControlName="City" />
+          <app-error-message
+            [field]="$any(newClientForm.get('City'))"
+            error="required"
+            message="Localidad requerida"
+          ></app-error-message>
+        </div>
+      </div>
+      <div class="col-6">
+        <div class="form-group">
+          <label class="pb-1">Código Postal</label>
+          <input class="form-control p-2" formControlName="ZipCode" />
+          <app-error-message
+            [field]="$any(newClientForm.get('ZipCode'))"
+            error="required"
+            message="Código postal requerido"
+          ></app-error-message>
+        </div>
+      </div>
+    </div>
+
+    <div class="row p-1 px-2">
+      <div class="col-12">
+        <div class="form-group">
+          <label class="pb-1">Dirección</label>
+          <input class="form-control p-2" formControlName="Address" />
+          <app-error-message
+            [field]="$any(newClientForm.get('Address'))"
+            error="required"
+            message="Dirección requerida"
+          ></app-error-message>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <div class="pb-4 px-4 d-flex justify-content-end align-items-center">
+    <button type="button" class="btn-paradigm m-1" (click)="createCustomer()">
+      Guardar
+    </button>
+  </div>
+</div>

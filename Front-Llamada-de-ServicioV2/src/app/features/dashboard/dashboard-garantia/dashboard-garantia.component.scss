@@ -1,0 +1,330 @@
+@import "../../../yuhmak.scss";
+
+.searchbar-container {
+  @include flex-row-start;
+  @include responsive("tab-port") {
+    @include flex-column-start;
+  }
+
+  .input-field {
+    width: 300px;
+    height: 45px;
+    background-color: rgb(240, 240, 240);
+    margin: 10px 0;
+    display: grid;
+    grid-template-columns: 15% 85%;
+    padding: 0 0.4rem;
+    @include responsive("tab-port") {
+      width: 100%;
+    }
+
+    i {
+      text-align: center;
+      line-height: 45px;
+      color: rgb(172, 172, 172);
+    }
+
+    select,
+    input {
+      background: none;
+      outline: none;
+      border: none;
+      line-height: 1;
+      border-radius: 10px;
+      padding: 5px 5px;
+    }
+  }
+}
+
+.btn {
+  width: 150px;
+  height: 55px;
+  border: none;
+  outline: none;
+  border-radius: 0px 10px 10px 0px;
+  cursor: pointer;
+  background-color: var(--paradigm-blue);
+  color: rgba(250, 250, 250);
+  transition: 500ms;
+  &:last-child {
+    border-radius: 10px;
+  }
+  @include responsive("tab-port") {
+    border-radius: 10px;
+  }
+
+  &:hover {
+    background-color: var(--paradigm-magenta);
+  }
+}
+
+.page-card-bikes {
+  padding: 0.5rem;
+  box-shadow: 1px 1px 10px rgba(230, 230, 230);
+  margin: 10px 0;
+}
+
+.title-create-plans {
+  font-size: 1.2rem;
+  color: var(--paradigm-text);
+  margin-bottom: 10px;
+}
+
+.client-motorbike-info {
+  padding-bottom: 10px;
+  span {
+    font-size: 1.2rem;
+    color: var(--paradigm-text);
+    margin-bottom: 10px;
+    strong:hover {
+      color: var(--paradigm-magenta);
+      cursor: pointer;
+    }
+  }
+}
+
+.inputs-container {
+  @include flex-row-between;
+  width: 100%;
+  @include responsive("tab-port") {
+    @include flex-column-start;
+  }
+
+  .input-field {
+    @include flex-column-start;
+    width: 50%;
+    margin: 2px;
+    @include responsive("tab-port") {
+      width: 100%;
+    }
+
+    select {
+      width: 100%;
+    }
+  }
+}
+
+.dialog-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  @include responsive("tab-port") {
+    padding: 5px;
+  }
+}
+
+.dialog-body {
+  padding: 10px;
+  @include responsive("tab-port") {
+    padding: 5px;
+  }
+}
+
+.tab-container {
+  @include flex-row-between;
+  @include responsive("tab-port") {
+    @include flex-column-start;
+  }
+
+  mat-form-field {
+    width: 30%;
+    @include responsive("tab-port") {
+      width: 100%;
+    }
+  }
+}
+
+.tab-container-call {
+  @include flex-row-between;
+  @include responsive("tab-port") {
+    @include flex-column-start;
+  }
+  mat-form-field {
+    width: 45%;
+    @include responsive("tab-port") {
+      width: 100%;
+    }
+  }
+}
+
+.btn-other-motorbike {
+  width: 150px;
+  height: 55px;
+  border: none;
+  outline: none;
+  border-radius: 10px 10px 0px 0px;
+  cursor: pointer;
+  background-color: var(--paradigm-blue);
+  color: rgba(250, 250, 250);
+  transition: 500ms;
+  &:last-child {
+    border-radius: 10px;
+  }
+  @include responsive("tab-port") {
+    border-radius: 10px;
+  }
+  &:hover {
+    background-color: var(--paradigm-magenta);
+  }
+}
+
+.tab-container-operations {
+  @include flex-row-start;
+  @include responsive("tab-port") {
+    @include flex-column-start;
+  }
+}
+
+.change-edit-service {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+
+  mat-form-field {
+    border: none !important;
+    outline: none !important;
+  }
+}
+
+.href-file {
+  text-decoration: none;
+  .file-pdf-container {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    flex-direction: row;
+    color: var(--paradigm-blue);
+    &:hover {
+      color: var(--paradigm-magenta);
+    }
+    i {
+      font-size: 40px;
+      margin-right: 10px;
+    }
+    span {
+      font-size: 20px;
+    }
+  }
+}
+
+.img-container {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+
+  .img-selected {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+  }
+}
+.warranty-image {
+  width: 220px;
+}
+
+.ST {
+  color: #3c8dbc;
+  font-weight: bold;
+}
+
+.SI {
+  color: #ff851b;
+  font-weight: bold;
+}
+
+.AP {
+  color: #00a65a;
+  font-weight: bold;
+}
+
+.PA {
+  color: #39cccc;
+  font-weight: bold;
+}
+
+.EP {
+  color: #d81b60;
+  font-weight: bold;
+}
+
+.PR {
+  color: #605ca8;
+  font-weight: bold;
+}
+
+.RP {
+  color: #f39c12;
+  font-weight: bold;
+}
+
+.RC {
+  color: #f56954;
+  font-weight: bold;
+}
+
+.type-colors {
+  display: flex;
+  flex-wrap: wrap;
+
+  .box-type {
+    margin: 10px;
+    @include flex-row-center;
+
+    .bg-type {
+      width: 10px;
+      height: 10px;
+      margin-right: 6px;
+      font-weight: bold;
+    }
+
+    .type-name {
+      color: #8898aa;
+      &:hover {
+        color: #969da6;
+        cursor: pointer;
+      }
+    }
+  }
+}
+
+.actype-type {
+  font-weight: bold;
+  color: #969da6 !important;
+}
+
+.BG-ST {
+  background: #3c8dbc;
+}
+
+.BG-SI {
+  background: #ff851b;
+}
+
+.BG-AP {
+  background: #00a65a;
+}
+
+.BG-PA {
+  background: #39cccc;
+}
+
+.BG-EP {
+  background: #d81b60;
+}
+
+.BG-PR {
+  background: #605ca8;
+}
+
+.BG-RP {
+  background: #f39c12;
+}
+
+.BG-RC {
+  background: #f56954;
+}

@@ -1,0 +1,98 @@
+<div class="container">
+  <div class="login-container">
+    <div class="sign-in">
+      <form
+        [formGroup]="loginForm"
+        *ngIf="loginState.user === null && !loginState.offices.length"
+      >
+        <h2 class="title">Llamada de Servicios</h2>
+        <div class="input-field">
+          <i class="fas fa-user"></i>
+          <input
+            type="text"
+            id="UserName"
+            formControlName="UserName"
+            placeholder="Usuario"
+          />
+        </div>
+        <app-error-message
+          [field]="$any(loginForm.get('UserName'))"
+          error="required"
+          message="Usuario requerido"
+        ></app-error-message>
+        <div class="input-field">
+          <i class="fas fa-lock"></i>
+          <input
+            type="password"
+            id="Password"
+            formControlName="Password"
+            placeholder="Contraseña"
+          />
+        </div>
+        <app-error-message
+          [field]="$any(loginForm.get('Password'))"
+          error="required"
+          message="Cotnraseña requerida"
+        ></app-error-message>
+        <button
+          class="btn solid"
+          [disabled]="!loginForm.valid"
+          (click)="login()"
+        >
+          Ingresar
+        </button>
+      </form>
+      <form *ngIf="loginState.user !== null && loginState.offices.length > 0">
+        <h2 class="title">Llamada de servicio</h2>
+        <span class="welcome-msg">Bienvenido {{ loginState.user }}</span>
+        <span class="office-msg">Selecciona una sucursal:</span>
+        <div class="input-field">
+          <i class="fas fa-level-down-alt"></i>
+          <select
+            placeholder="Status"
+            name="officeSelected"
+            [(ngModel)]="officeSelected"
+            (change)="selectOffice($event)"
+          >
+            <option
+              *ngFor="let office of loginState.offices"
+              [value]="office.BPLId"
+            >
+              {{ office.BPLName }} - {{ office.AliasName }}
+            </option>
+          </select>
+        </div>
+      </form>
+      <form
+        *ngIf="
+          loginState.user !== null && !loginState.offices.length && !loading
+        "
+      >
+        <h2 class="title">Llamada de servicio</h2>
+        <span class="welcome-msg">Bienvenido {{ loginState.user }}</span>
+        <span
+          class="office-msg text-center"
+          *ngIf="loginState.user !== null && !loginState.offices.length"
+          >El usuario no posee sucursales asociadas. Intente ingresar con otro
+          usuario o solicite que se le asocien sucursales por medio de un
+          ticket.</span
+        >
+        <button class="btn solid" (click)="logoutUser()">Salir</button>
+      </form>
+    </div>
+
+    <div class="credits">
+      <p>Powered by <a href="https://grupoyuhmak.com">Yuhmak</a></p>
+    </div>
+  </div>
+
+  <div class="panel-container">
+    <div class="panel">
+      <img
+        src="../../../assets/images/connected-world.png"
+        class="image animation-image"
+        alt=""
+      />
+    </div>
+  </div>
+</div>

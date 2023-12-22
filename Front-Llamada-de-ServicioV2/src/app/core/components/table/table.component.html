@@ -1,0 +1,16 @@
+<div class="card table-card overflow-auto">
+  <table class="table align-items-center table-flush">
+    <thead class="thead-light table-light">
+      <tr *ngIf="headers && headers.length > 0">
+        <th scope="col" *ngFor="let head of headers">
+          <a class="sortBy">
+            {{ head }}
+          </a>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <ng-content></ng-content>
+    </tbody>
+  </table>
+</div>

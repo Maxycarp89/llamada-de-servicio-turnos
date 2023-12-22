@@ -1,0 +1,17 @@
+<div class="app-container">
+  <app-sidemenu
+    *ngIf="isLoggedIn"
+    (onToggleSideMenu)="onToggleSideMenu($event)"
+  ></app-sidemenu>
+  <div class="app-body" *ngIf="isLoggedIn">
+    <app-body
+      [collapsed]="isSideMenuCollapsed"
+      [screenWidth]="screenWidth"
+    ></app-body>
+  </div>
+  <div class="app-body" *ngIf="!isLoggedIn">
+    <router-outlet></router-outlet>
+    <app-toasts aria-live="polite" aria-atomic="true"></app-toasts>
+  </div>
+  <app-loading></app-loading>
+</div>

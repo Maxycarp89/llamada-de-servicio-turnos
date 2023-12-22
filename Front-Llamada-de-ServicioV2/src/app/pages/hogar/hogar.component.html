@@ -1,0 +1,573 @@
+<h2 class="title-motos">Ingresar el tipo de busqueda y lo que desee buscar:</h2>
+<form class="input-group searchbar-container" [formGroup]="searchForm">
+  <div class="input-field">
+    <i class="fa-solid fa-filter"></i>
+    <select id="type" formControlName="type">
+      <option value="NameOrCode">Código/Nombre</option>
+      <option value="Client">Código del Cliente</option>
+      <option value="DNI">DNI</option>
+    </select>
+  </div>
+  <div class="input-field">
+    <i class="fas fa-search"></i>
+    <input id="search" formControlName="search" placeholder="Search" />
+  </div>
+  <button class="btn solid" [disabled]="!this.searchForm.valid" (click)="searchHomItem()">
+    Buscar
+  </button>
+</form>
+<div class="card page-card-motos" *ngIf="!hogarState.homeAppliance.length && hogarState.errorRespMsg !== null">
+  {{ hogarState.errorRespMsg }}
+</div>
+<div class="card page-card-motos" *ngIf="hogarState.homeAppliance.length > 0 && hogarState.errorRespMsg === null">
+  <app-table [headers]="['C° Cliente', 'Nombre', 'C° Articulo', 'Articulo', 'Acción']"
+    *ngIf="hogarState.homeAppliance[0].CardCode">
+    <tr class="data-row" *ngFor="let homeItem of hogarState.homeAppliance">
+      <td class="td-col-1"> {{ homeItem.CardCode }}</td>
+      <td class="td-col-2"> {{ homeItem.CardName }}</td>
+      <td class="td-col-3"> {{ homeItem.ItemCode }}</td>
+      <td class="td-col-4"> {{homeItem.Dscription}}</td>
+      <td class="td-col-5 actions-container"> <i class="fa-solid fa-pen-to-square edit-action"
+          (click)="openDialogService(homeItem, dialogService)" ngbTooltip="Crear / Editar Service"></i>
+      </td>
+    </tr>
+  </app-table>
+  <app-table [headers]="['Código', 'Nombre', 'Tipo de Unidad', 'Serie', 'Acción']"
+    *ngIf="!hogarState.homeAppliance[0].CardCode">
+    <tr class="tr-container" *ngFor="let homeItem of hogarState.homeAppliance">
+      <td class="td-item">
+        <div class="info-of-item-container">
+          {{ homeItem.ItemCode }}
+        </div>
+      </td>
+      <td class="td-item">
+        <div class="info-of-item-container">
+          {{ homeItem.ItemName }}
+        </div>
+      </td>
+      <td class="td-item">
+        <div class="info-of-item-container">
+          {{ homeItem.SalesUnit }}
+        </div>
+      </td>
+      <td class="td-item">
+        <div class="info-of-item-container">No posee</div>
+      </td>
+      <td class="td-item">
+        <div class="info-of-item-container actions-container">
+          <i class="fa-solid fa-pen-to-square edit-action" (click)="openDialogService(homeItem, dialogService)"
+            ngbTooltip="Crear / Editar Service"></i>
+        </div>
+      </td>
+    </tr>
+  </app-table>
+</div>
+
+<ng-template #dialogService let-modal>
+  <app-loading></app-loading>
+  <app-toasts aria-live="polite" aria-atomic="true"></app-toasts>
+
+  <div class="pt-4 px-3">
+    <div>
+      <h4 *ngIf="!serviceForm.value.ServiceCallID">Crear Servicio</h4>
+      <h4 *ngIf="serviceForm.value.ServiceCallID">
+        Editar Servicio con el ID {{ serviceForm.value.ServiceCallID }}
+      </h4>
+
+      <div class="row">
+        <div class="col-4" *ngIf="hogarState.historyService.length > 0">
+          <div class="form-group">
+            <label class="pb-1">Editar/Consultar Service por medio del Historial:</label>
+            <select class="form-control p-2" (change)="changeFormValues($event)">
+              <option hidden>Service ID | Estado | Asunto</option>
+              <option *ngFor="let history of hogarState.historyService" [value]="history.ServiceCallID">
+                {{ history.ServiceCallID }} -
+                {{
+                history.Status === -1
+                ? "Cerrado"
+                : history.Status === -3
+                ? "Abierto"
+                : history.Status === -2
+                ? "Pendiente"
+                : history.Status === 2
+                ? "En proceso"
+                : "Desestimados"
+                }}
+                - {{ history.CustomerName }} - {{ history.Subject }}
+              </option>
+            </select>
+          </div>
+        </div>
+
+        <div class="col-4 d-flex align-items-end">
+          <button class="btn-paradigm" *ngIf="serviceForm.value.ServiceCallID" (click)="newServiceClicked()">
+            Nuevo Service
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="pt-2 px-3">
+    <ul class="nav nav-tabs" id="service" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="basicdata-tab" data-bs-toggle="tab" data-bs-target="#basicdata"
+          aria-controls="basicdata" aria-selected="true" type="button" role="tab">
+          Datos Básicos
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="calltypedata-tab" data-bs-toggle="tab" data-bs-target="#calltypedata" type="button"
+          role="tab" aria-controls="calltypedata" aria-selected="false">
+          Datos de la Llamada
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="operations-tab" data-bs-toggle="tab" data-bs-target="#operations" type="button"
+          role="tab" aria-controls="operations" aria-selected="false">
+          Operaciones
+        </button>
+      </li>
+    </ul>
+  </div>
+
+  <div class="tab-content p-4" id="serviceContent">
+    <div class="tab-pane fade show active" id="basicdata" role="tabpanel" aria-labelledby="basicdata-tab">
+      <form [formGroup]="serviceForm">
+        <div class="row p-1 px-2">
+          <div class="col-4">
+            <div class="form-group">
+              <label class="pb-1">C° Socio de Negocio - Dato requerido</label>
+              <input formControlName="CustomerCode" readonly class="form-control p-2" />
+            </div>
+          </div>
+          <div class="col-4">
+            <div class="form-group">
+              <label class="pb-1">Nombre del Socio - Dato requerido</label>
+              <input readonly formControlName="CustomerName" class="form-control p-2" />
+            </div>
+          </div>
+          <div class="col-4">
+            <div class="form-group">
+              <label class="pb-1">Destino de factura - Dato requerido</label>
+              <input formControlName="BPBillToAddress" class="form-control p-2" />
+              <app-error-message [field]="$any(serviceForm.get('BPBillToAddcress'))" error="required"
+                message="Dirección de factura requerida"></app-error-message>
+            </div>
+          </div>
+        </div>
+
+        <div class="row p-1 px-2">
+          <div class="col-4">
+            <div class="form-group">
+              <label class="pb-1">C° Articulo - Dato requerido</label>
+              <input formControlName="ItemCode" readonly class="form-control p-2" />
+              <app-error-message [field]="$any(serviceForm.get('ItemCode'))" error="required"
+                message="C° del articulo requerido"></app-error-message>
+            </div>
+          </div>
+          <div class="col-4">
+            <div class="form-group">
+              <label class="pb-1">Descripción - Dato requerido</label>
+              <input formControlName="ItemDescription" readonly class="form-control p-2" />
+              <app-error-message [field]="$any(serviceForm.get('ItemDescription'))" error="required"
+                message="Descripción del articulo requerida"></app-error-message>
+            </div>
+          </div>
+          <div class="col-4">
+            <div class="form-group">
+              <label class="pb-1">Tipo de Service</label>
+              <input formControlName="U_TipoOrigen" readonly class="form-control p-2" />
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <div class="tab-pane fade" id="calltypedata" role="tabpanel" aria-labelledby="calltypedata-tab">
+      <form [formGroup]="serviceForm">
+        <div class="row p-1 px-2">
+          <div class="col-6">
+            <div class="form-group">
+              <label class="pb-1">Estado de la Llamada - Dato requerido</label>
+              <select class="form-control p-2" formControlName="Status" *ngIf="serviceForm.value.ServiceCallID"
+                addParsedValue>
+                <option *ngFor="let status of coreState.statusCall" [value]="status.value">
+                  {{ status.name }}
+                </option>
+              </select>
+              <select class="form-control p-2" formControlName="Status" *ngIf="!serviceForm.value.ServiceCallID"
+                addParsedValue>
+                <option *ngFor="let status of coreState.statusCall.slice(0, 1)" [value]="status.value">
+                  {{ status.name }}
+                </option>
+              </select>
+              <app-error-message [field]="$any(serviceForm.get('Status'))" error="required"
+                message="Estado requerido"></app-error-message>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="form-group">
+              <label class="pb-1">Prioridad - Dato requerido</label>
+              <select class="form-control p-2" formControlName="Priority" addParsedValue>
+                <option *ngFor="let priority of coreState.priority" [value]="priority.value">
+                  {{ priority.name }}
+                </option>
+              </select>
+              <app-error-message [field]="$any(serviceForm.get('Priority'))" error="required"
+                message="Nivel de prioridad requerido"></app-error-message>
+            </div>
+          </div>
+        </div>
+        <div class="row p-1 px-2">
+          <div class="col-6">
+            <div class="form-group">
+              <label class="pb-1">Asunto - Dato requerido</label>
+              <input formControlName="Subject" class="form-control p-2" />
+              <app-error-message [field]="$any(serviceForm.get('Subject'))" error="required"
+                message="Asunto requerido"></app-error-message>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="form-group">
+              <label class="pb-1">Comentario - Dato requerido</label>
+              <input formControlName="Description" class="form-control p-2" />
+              <app-error-message [field]="$any(serviceForm.get('Description'))" error="required"
+                message="Comentario requerido"></app-error-message>
+            </div>
+          </div>
+        </div>
+        <div class="row p-1 px-2" *ngIf="serviceForm.value.ServiceCallID">
+          <div class="col-12">
+            <div class="form-group">
+              <label class="pb-1">Resolución - Dato requerido solo si se quiere cerrar el
+                service</label>
+              <input formControlName="Resolution" [readonly]="serviceForm.value.Status === -3"
+                class="form-control p-2" />
+              <app-error-message [field]="$any(serviceForm.get('Resolution'))" error="required"
+                message="Resolución requerida"></app-error-message>
+            </div>
+          </div>
+        </div>
+        <div class="row p-1 px-2">
+          <div class="col-4" *ngIf="coreState.origins.length > 0">
+            <div class="form-group">
+              <label class="pb-1">Origen - Dato requerido</label>
+              <select class="form-control p-2" formControlName="Origin" addParsedValue>
+                <option *ngFor="let origin of coreState.origins" [value]="origin.OriginID">
+                  {{ origin.Name }}
+                </option>
+              </select>
+              <app-error-message [field]="$any(serviceForm.get('Origin'))" error="required"
+                message="Origen requerido"></app-error-message>
+            </div>
+          </div>
+          <div class="col-4" *ngIf="coreState.problemType.length > 0">
+            <div class="form-group">
+              <label class="pb-1">Tipo de Problema - Dato requerido</label>
+              <select formControlName="ProblemType" (ngModelChange)="clearSubProblemType()" class="form-control p-2"
+                addParsedValue>
+                <option hidden></option>
+                <option *ngFor="let problemType of coreState.problemType" [value]="problemType.ProblemTypeID">
+                  {{ problemType.Name }}
+                </option>
+              </select>
+              <app-error-message [field]="$any(serviceForm.get('ProblemType'))" error="required"
+                message="Tipo de problema requerido"></app-error-message>
+            </div>
+          </div>
+          <div class="col-4" *ngIf="coreState.subProblemType.length > 0">
+            <div class="form-group">
+              <label class="pb-1">Subtipo de Problema - Dato requerido</label>
+              <select formControlName="ProblemSubType" class="form-control p-2" addParsedValue>
+                <option hidden></option>
+                <option *ngFor="
+                    let subProblemFilter of coreState.subProblemType
+                      | subProblemFilter
+                        : serviceForm.value.ProblemType
+                        : coreState.problemType
+                  " [value]="subProblemFilter.ProblemSubTypeID">
+                  {{ subProblemFilter.Name }}
+                </option>
+              </select>
+              <app-error-message [field]="$any(serviceForm.get('ProblemSubType'))" error="required"
+                message="Subtipo de problema requerido"></app-error-message>
+            </div>
+          </div>
+        </div>
+        <div class="row p-1 px-2">
+          <div class="col-4" *ngIf="coreState.callTypes.length > 0">
+            <div class="form-group">
+              <label class="pb-1">Tipo de Llamada - Dato requerido</label>
+              <select class="form-control p-2" formControlName="CallType" addParsedValue>
+                <option *ngFor="let callType of coreState.callTypes" [value]="callType.CallTypeID">
+                  {{ callType.Name }}
+                </option>
+              </select>
+              <app-error-message [field]="$any(serviceForm.get('CallType'))" error="required"
+                message="Tipo de llamada requerida"></app-error-message>
+            </div>
+          </div>
+          <div class="col-4" *ngIf="coreState.employees.length > 0">
+            <div class="form-group">
+              <label class="pb-1">Técnico - Dato requerido</label>
+              <select formControlName="TechnicianCode" class="form-control p-2 selectpicker" addParsedValue>
+                <option *ngFor="let employee of coreState.employees | employeesFilter" [value]="employee.EmployeeID">
+                  {{ employee.FirstName }} {{ employee.LastName }}
+                </option>
+              </select>
+              <app-error-message *ngIf="serviceForm.value.ServiceCallID"
+                [field]="$any(serviceForm.get('TechnicianCode'))" error="required"
+                message="Técnico requerido"></app-error-message>
+            </div>
+          </div>
+          <div class="col-4">
+            <div class="form-group">
+              <label class="pb-1">Rayado - Dato requerido</label>
+              <select class="form-control p-2" formControlName="U_Rayado">
+                <option *ngFor="let opt of coreState.options" [value]="opt">
+                  {{ opt }}
+                </option>
+              </select>
+              <app-error-message [field]="$any(serviceForm.get('U_Rayado'))" error="required"
+                message="Posesión de rayadura requerida"></app-error-message>
+            </div>
+          </div>
+        </div>
+        <div class="row p-1 px-2">
+          <div class="col-4">
+            <div class="form-group">
+              <label class="pb-1">Rotura - Dato requerido</label>
+              <select formControlName="U_Rotura" class="form-control p-2">
+                <option *ngFor="let opt of coreState.options" [value]="opt">
+                  {{ opt }}
+                </option>
+              </select>
+              <app-error-message [field]="$any(serviceForm.get('U_Rotura'))" error="required"
+                message="Posesión de rotura requerida"></app-error-message>
+            </div>
+          </div>
+          <div class="col-4">
+            <div class="form-group">
+              <label class="pb-1">Manchado - Dato requerido</label>
+              <select formControlName="U_Manchado" class="form-control p-2">
+                <option *ngFor="let opt of coreState.options" [value]="opt">
+                  {{ opt }}
+                </option>
+              </select>
+              <app-error-message [field]="$any(serviceForm.get('U_Manchado'))" error="required"
+                message="Posesión de manchadura requerida"></app-error-message>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <div class="tab-pane fade" id="operations" role="tabpanel" aria-labelledby="operations-tab">
+      <div class="row p-1 px-2" *ngIf="
+          serviceForm.value.ServiceCallActivities &&
+          serviceForm.value.ServiceCallActivities.length > 0
+        ">
+        <h5>Actividades asociadas a la llamada de servicio:</h5>
+        <app-table [headers]="['C° de la Actividad', 'Consultar']">
+          <tr class="data-row" *ngFor="let item of serviceForm.value.ServiceCallActivities">
+            <td class="item-col-1">{{ item.ActivityCode }}</td>
+            <td class="item-col-2 actions-container">
+              <span class="edit-action" (click)="activityConsult(item.ActivityCode)">Consultar</span>
+            </td>
+          </tr>
+        </app-table>
+      </div>
+      <div class="row p-1 px-2" *ngIf="hogarState.itemsExistInService.length > 0">
+        <h5>Articulos transferidos asociados al service:</h5>
+        <app-table [headers]="[
+            'C° del Item',
+            'Descripción',
+            'Desde',
+            'Hacia',
+            'Serie',
+            'Cantidad'
+          ]">
+          <tr class="data-row" *ngFor="let item of hogarState.itemsExistInService">
+            <td class="item-col-1">{{ item.ItemCode }}</td>
+            <td class="item-col-2">{{ item.ItemDescription }}</td>
+            <td class="item-col-3">{{ item.FromWarehouse }}</td>
+            <td class="item-col-4">{{ item.ToWarehouse }}</td>
+            <td class="item-col-5">
+              {{
+              item.SerialNumbers.length > 0
+              ? item.SerialNumbers[0].InternalSerialNumber
+              : "Sin serie"
+              }}
+            </td>
+            <td class="item-col-6">{{ item.Quantity }}</td>
+          </tr>
+        </app-table>
+      </div>
+      <form [formGroup]="transferForm" *ngIf="!!serviceForm.value.ClosingDate === false">
+        <div class="row p-1 px-2">
+          <h5>Transferencia de Stock:</h5>
+          <div class="col-4">
+            <div class="form-group">
+              <label class="pb-1">Socio de negocios</label>
+              <input class="form-control p-2" formControlName="CardCode" (keydown)="getSocio($event)" />
+            </div>
+          </div>
+          <div class="col-4">
+            <div class="form-group">
+              <label class="pb-1">Dirección</label>
+              <input class="form-control p-2" readonly formControlName="Address" />
+            </div>
+          </div>
+          <div class="col-4">
+            <div class="form-group">
+              <label class="pb-1">Nombre</label>
+              <input class="form-control p-2" readonly formControlName="CardName" />
+            </div>
+          </div>
+        </div>
+
+        <div class="row p-1 px-2">
+          <div class="col-4">
+            <div class="form-group">
+              <label class="pb-1">Almacén Origen</label>
+              <select class="form-control p-2" readonly formControlName="FromWarehouse">
+                <option [value]="office.BPLName">
+                  {{ office.BPLName }} - {{ office.AliasName }}
+                </option>
+              </select>
+            </div>
+          </div>
+          <div class="col-4">
+            <div class="form-group">
+              <label class="pb-1">ID del Almacén</label>
+              <input class="form-control p-2" addParsedValue formControlName="BPLID" readonly />
+            </div>
+          </div>
+          <div class="col-4">
+            <div class="form-group">
+              <label class="pb-1">Punto de Emisión</label>
+              <input class="form-control p-2" appUpperCase readonly formControlName="PointOfIssueCode" />
+            </div>
+          </div>
+        </div>
+
+        <div class="row p-1 px-2">
+          <div class="col-4" *ngIf="hogarState.secondWarehouse.length > 0">
+            <div class="form-group">
+              <label class="pb-1">Almacén Destino</label>
+              <select class="form-control p-2" (change)="getWarehouseFriend($event)">
+                <option *ngFor="let warehouse of hogarState.secondWarehouse" [value]="warehouse.WhsCode">
+                  {{ warehouse.WhsCode }} - {{ warehouse.WhsName }}
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <div class="col-4">
+            <div class="form-group">
+              <label class="pb-1">N° de Almacén Destino</label>
+              <input class="form-control p-2" formControlName="ToWarehouse" readonly />
+            </div>
+          </div>
+        </div>
+      </form>
+
+      <form [formGroup]="searchItemInStock" *ngIf="!!serviceForm.value.ClosingDate === false">
+        <div class="row p-1 px-2">
+          <div class="col-4">
+            <div class="form-group">
+              <label class="pb-1">Buscar por Código/Nombre del artículo</label>
+              <input class="form-control p-2" appUpperCase formControlName="search" />
+            </div>
+          </div>
+          <div class="col-2 d-flex align-items-end">
+            <button class="btn-paradigm mt-1" [disabled]="!searchItemInStock.valid" (click)="getItemInStock()">
+              Buscar
+            </button>
+          </div>
+        </div>
+
+        <div class="row p-1 px-2" *ngIf="hogarState.items.length > 0">
+          <app-table [headers]="[
+              'Items encontrados',
+              'Stock',
+              'Cantidad Elegida',
+              'Acción'
+            ]">
+            <tr class="data-row" *ngFor="
+                let item of hogarState.items
+                  | slice
+                    : (pageIndex - 1) * pageSize
+                    : (pageIndex - 1) * pageSize + pageSize
+              ">
+              <td class="item-col-1">
+                {{ item.ItemCode }} - {{ item.ItemName }}
+              </td>
+              <td class="item-col-2">
+                {{ totalParsed(item.Stock) }}
+              </td>
+              <td class="item-col-3">
+                <input type="number" class="form-control p-2" name="Quantity"
+                  [disabled]="item.ManSerNum !== 'Y' && item.Stock < 1"
+                  (change)="getNewQuantityForItems(item.id__, $event)" [max]="item.Stock" [value]="item.Quantity" />
+              </td>
+              <td class="item-col-4 actions-container">
+                <span class="edit-action" *ngIf="item.ManSerNum !== 'Y' && item.Stock >= 1"
+                  (click)="addItemForStockTransfer(item)">Agregar
+                </span>
+                <span *ngIf="item.Stock < 1"> Sin stock </span>
+                <span class="edit-action" *ngIf="item.ManSerNum === 'Y' && item.Stock >= 1"
+                  (click)="addItemForStockTransfer(item)">Cargar Serie
+                </span>
+              </td>
+            </tr>
+          </app-table>
+          <div class="d-flex justify-content-center item-align-center py-2">
+            <ngb-pagination [collectionSize]="hogarState.items.length" [(page)]="pageIndex"
+              [pageSize]="pageSize"></ngb-pagination>
+          </div>
+        </div>
+
+        <div class="row p-1 px-2" *ngIf="transferForm.value.StockTransferLines.length > 0">
+          <app-table [headers]="[
+              'Items selecionados',
+              'Cantidad a Transferir',
+              'Serie',
+              'Acción'
+            ]">
+            <tr class="data-row" *ngFor="let item of transferForm.value.StockTransferLines">
+              <td class="item-col-1">
+                {{ item.Code }} - {{ item.ItemDescription }}
+              </td>
+              <td class="item-col-2">
+                {{ item.Quantity }}
+              </td>
+              <td class="item-col-3">
+                {{
+                item.SerialNumbers.length > 0
+                ? item.SerialNumbers[0].InternalSerialNumber
+                : "No posee"
+                }}
+              </td>
+              <td class="item-col-4 actions-container">
+                <span (click)="removeItemSelected(item.ItemCode)" class="history-action">Quitar
+                </span>
+              </td>
+            </tr>
+          </app-table>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="pb-4 px-4 d-flex justify-content-end align-items-center">
+    <button type="button" class="btn-paradigm-secondary m-1" (click)="dismiss()">
+      Cancelar
+    </button>
+    <button type="button" class="btn-paradigm m-1" *ngIf="!!serviceForm.value.ClosingDate === false"
+      (click)="editOrCreateService()">
+      {{ serviceForm.value.ServiceCallID ? "Editar Service" : "Crear Service" }}
+    </button>
+  </div>
+</ng-template>

@@ -1,0 +1,7 @@
+<div class="body-title" [ngClass]="getTitleClass()">
+  <h3>{{ pageTitle }}</h3>
+</div>
+<div class="body" [ngClass]="getBodyClass()">
+  <router-outlet></router-outlet>
+  <app-toasts aria-live="polite" aria-atomic="true"></app-toasts>
+</div>

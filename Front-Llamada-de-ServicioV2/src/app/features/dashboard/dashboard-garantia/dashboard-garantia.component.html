@@ -1,0 +1,1570 @@
+<h3 class="title-bikes">Historial de servicios para Motos por Garantía:</h3>
+<form class="searchbar-container input-group pt-2" [formGroup]="rangeDate">
+  <mat-form-field appearance="outline">
+    <mat-label>Buscar por Rango de Fechas</mat-label>
+    <mat-date-range-input [rangePicker]="picker">
+      <input
+        matStartDate
+        placeholder="Inicio"
+        formControlName="frDate"
+        [value]="rangeDate.value.frDate | date : 'dd/MM/yyyy'"
+        readonly
+      />
+      <input
+        matEndDate
+        placeholder="Fin"
+        formControlName="ltDate"
+        readonly
+        [value]="rangeDate.value.ltDate | date : 'dd/MM/yyyy'"
+      />
+    </mat-date-range-input>
+    <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+    <mat-date-range-picker #picker></mat-date-range-picker>
+  </mat-form-field>
+  <button
+    class="btn solid"
+    (click)="searchByRange()"
+    [disabled]="!rangeDate.valid"
+  >
+    Buscar
+  </button>
+</form>
+
+<div class="card page-card-bikes" *ngIf="dashboardHistory.length > 0">
+  <div class="type-colors">
+    <div *ngFor="let info of coreState.warranty" class="box-type">
+      <div
+        class="bg-type"
+        [ngClass]="{
+          'BG-ST': info.value === 'ST',
+          'BG-SI': info.value === 'SI',
+          'BG-AP': info.value === 'AP',
+          'BG-PA': info.value === 'PA',
+          'BG-EP': info.value === 'EP',
+          'BG-PR': info.value === 'PR',
+          'BG-RP': info.value === 'RP',
+          'BG-RC': info.value === 'RC'
+        }"
+      ></div>
+      <span
+        class="type-name"
+        (click)="changeActive(info.value)"
+        [ngClass]="{
+          'actype-type': activeType === info.value
+        }"
+        >{{ info.name }}
+      </span>
+    </div>
+  </div>
+
+  <div *ngIf="!(dashboardHistory | warrantyType : activeType).length">
+    <h4 class="text-center">
+      No se encontraron servicios por garantía del tipo seleccionado
+    </h4>
+  </div>
+  <app-table
+    [headers]="headers"
+    *ngIf="(dashboardHistory | warrantyType : activeType).length > 0"
+  >
+    <tr
+      class="data-row"
+      *ngFor="
+        let history of dashboardHistory
+          | warrantyType : activeType
+          | slice
+            : (thirdPageIndex - 1) * secondPageSize
+            : (thirdPageIndex - 1) * secondPageSize + secondPageSize
+      "
+    >
+      <td class="item-col-1 actions-container">
+        <div class="d-flex">
+          <i
+            class="fa-solid fa-eye history-action"
+            ngbTooltip="Ver Información del Service"
+            (click)="openModalViewServiceInfo(history, modalJustView)"
+          ></i>
+          <i
+            class="fa-solid fa-pen-to-square edit-action"
+            (click)="openDialogService(history, modalNewService)"
+            ngbTooltip="Editar Service"
+          ></i>
+        </div>
+      </td>
+      <td
+        class="item-col-2"
+        [ngClass]="{
+          ST: history.U_EstadoGrtia === 'ST',
+          SI: history.U_EstadoGrtia === 'SI',
+          AP: history.U_EstadoGrtia === 'AP',
+          PA: history.U_EstadoGrtia === 'PA',
+          EP: history.U_EstadoGrtia === 'EP',
+          PR: history.U_EstadoGrtia === 'PR',
+          RP: history.U_EstadoGrtia === 'RP',
+          RC: history.U_EstadoGrtia === 'RC'
+        }"
+      >
+        {{ history.ServiceCallID }}
+      </td>
+      <td
+        class="item-col-3"
+        [ngClass]="{
+          ST: history.U_EstadoGrtia === 'ST',
+          SI: history.U_EstadoGrtia === 'SI',
+          AP: history.U_EstadoGrtia === 'AP',
+          PA: history.U_EstadoGrtia === 'PA',
+          EP: history.U_EstadoGrtia === 'EP',
+          PR: history.U_EstadoGrtia === 'PR',
+          RP: history.U_EstadoGrtia === 'RP',
+          RC: history.U_EstadoGrtia === 'RC'
+        }"
+      >
+        {{ history.U_Chasis }}
+      </td>
+      <td
+        class="item-col-4"
+        [ngClass]="{
+          ST: history.U_EstadoGrtia === 'ST',
+          SI: history.U_EstadoGrtia === 'SI',
+          AP: history.U_EstadoGrtia === 'AP',
+          PA: history.U_EstadoGrtia === 'PA',
+          EP: history.U_EstadoGrtia === 'EP',
+          PR: history.U_EstadoGrtia === 'PR',
+          RP: history.U_EstadoGrtia === 'RP',
+          RC: history.U_EstadoGrtia === 'RC'
+        }"
+      >
+        {{ history.ItemDescription }}
+      </td>
+      <td
+        class="item-col-5"
+        [ngClass]="{
+          ST: history.U_EstadoGrtia === 'ST',
+          SI: history.U_EstadoGrtia === 'SI',
+          AP: history.U_EstadoGrtia === 'AP',
+          PA: history.U_EstadoGrtia === 'PA',
+          EP: history.U_EstadoGrtia === 'EP',
+          PR: history.U_EstadoGrtia === 'PR',
+          RP: history.U_EstadoGrtia === 'RP',
+          RC: history.U_EstadoGrtia === 'RC'
+        }"
+      >
+        {{ history.Subject }}
+      </td>
+      <td
+        class="item-col-6"
+        [ngClass]="{
+          ST: history.U_EstadoGrtia === 'ST',
+          SI: history.U_EstadoGrtia === 'SI',
+          AP: history.U_EstadoGrtia === 'AP',
+          PA: history.U_EstadoGrtia === 'PA',
+          EP: history.U_EstadoGrtia === 'EP',
+          PR: history.U_EstadoGrtia === 'PR',
+          RP: history.U_EstadoGrtia === 'RP',
+          RC: history.U_EstadoGrtia === 'RC'
+        }"
+      >
+        {{ history.CreationDate | date : "dd/MM/yyyy" }}
+      </td>
+      <td
+        class="item-col-7"
+        [ngClass]="{
+          ST: history.U_EstadoGrtia === 'ST',
+          SI: history.U_EstadoGrtia === 'SI',
+          AP: history.U_EstadoGrtia === 'AP',
+          PA: history.U_EstadoGrtia === 'PA',
+          EP: history.U_EstadoGrtia === 'EP',
+          PR: history.U_EstadoGrtia === 'PR',
+          RP: history.U_EstadoGrtia === 'RP',
+          RC: history.U_EstadoGrtia === 'RC'
+        }"
+      >
+        {{
+          history.Status === -1
+            ? "Cerrado"
+            : history.Status === -3
+            ? "Abierto"
+            : history.Status === -2
+            ? "Pendiente"
+            : history.Status === 2
+            ? "En proceso"
+            : "Desestimados"
+        }}
+        -
+        {{
+          history.U_EstadoGrtia === "ST"
+            ? "Sin Tratar"
+            : history.U_EstadoGrtia === "SI"
+            ? "Solicitud Inconpleta"
+            : history.U_EstadoGrtia === "AP"
+            ? "Aprobado"
+            : history.U_EstadoGrtia === "PA"
+            ? "Pendiente de Arribo a Taller"
+            : history.U_EstadoGrtia === "EP"
+            ? "Entrega Parcial"
+            : history.U_EstadoGrtia === "PR"
+            ? "Piezas Recibidas"
+            : history.U_EstadoGrtia === "RP"
+            ? "Reparado"
+            : history.U_EstadoGrtia === "RC" && "Rechazado"
+        }}
+      </td>
+      <td
+        class="item-col-8"
+        [ngClass]="{
+          ST: history.U_EstadoGrtia === 'ST',
+          SI: history.U_EstadoGrtia === 'SI',
+          AP: history.U_EstadoGrtia === 'AP',
+          PA: history.U_EstadoGrtia === 'PA',
+          EP: history.U_EstadoGrtia === 'EP',
+          PR: history.U_EstadoGrtia === 'PR',
+          RP: history.U_EstadoGrtia === 'RP',
+          RC: history.U_EstadoGrtia === 'RC'
+        }"
+      >
+        {{
+          history.U_NumeroPedigoG === null
+            ? "Sin Cargar"
+            : history.U_NumeroPedigoG
+        }}
+      </td>
+      <td
+        class="item-col-9"
+        [ngClass]="{
+          ST: history.U_EstadoGrtia === 'ST',
+          SI: history.U_EstadoGrtia === 'SI',
+          AP: history.U_EstadoGrtia === 'AP',
+          PA: history.U_EstadoGrtia === 'PA',
+          EP: history.U_EstadoGrtia === 'EP',
+          PR: history.U_EstadoGrtia === 'PR',
+          RP: history.U_EstadoGrtia === 'RP',
+          RC: history.U_EstadoGrtia === 'RC'
+        }"
+      >
+        {{ history.UpdateDate | date : "dd/MM/yyyy" }} -
+        {{ history.UpdatedTime.slice(0, 5) }}
+      </td>
+    </tr>
+  </app-table>
+  <div
+    class="d-flex justify-content-center item-align-center pt-2"
+    *ngIf="(dashboardHistory | warrantyType : activeType).length > 0"
+  >
+    <ngb-pagination
+      [collectionSize]="dashboardHistory.length"
+      [(page)]="thirdPageIndex"
+      [pageSize]="secondPageSize"
+      [maxSize]="5"
+      [ellipses]="false"
+    ></ngb-pagination>
+  </div>
+</div>
+
+<ng-template #modalNewService let-modal>
+  <app-loading></app-loading>
+  <app-toasts aria-live="polite" aria-atomic="true"></app-toasts>
+
+  <div class="pt-4 px-3">
+    <div>
+      <h4>Editar Servicio con el ID {{ serviceForm.value.ServiceCallID }}</h4>
+    </div>
+
+    <div class="pt-2 px-3">
+      <ul class="nav nav-tabs" id="service" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link active"
+            id="basicdata-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#basicdata"
+            type="button"
+            role="tab"
+            aria-controls="basicdata"
+            aria-selected="true"
+          >
+            Datos Básicos
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link"
+            id="warrantydata-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#warrantydata"
+            type="button"
+            role="tab"
+            aria-controls="warrantydata"
+            aria-selected="false"
+          >
+            Datos de la Garantía
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link"
+            id="calltypedata-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#calltypedata"
+            type="button"
+            role="tab"
+            aria-controls="calltypedata"
+            aria-selected="false"
+          >
+            Datos de la Llamada
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link"
+            id="operations-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#operations"
+            type="button"
+            role="tab"
+            aria-controls="operations"
+            aria-selected="false"
+          >
+            Transferencia de Stock
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link"
+            id="combos-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#combos"
+            type="button"
+            role="tab"
+            aria-controls="combos"
+            aria-selected="false"
+          >
+            Salida de mercancía
+          </button>
+        </li>
+        <li class="nav-item" role="presentation" *ngIf="currentPDF !== null">
+          <a [href]="currentPDF" download="PDF-SERVICE">
+            <button class="nav-link" type="button">Descargar PDF</button>
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <div class="tab-content p-4" id="serviceContent">
+      <div
+        class="tab-pane fade show active"
+        id="basicdata"
+        role="tabpanel"
+        aria-labelledby="basicdata-tab"
+      >
+        <form [formGroup]="serviceForm">
+          <div class="row p-1 px-2">
+            <div class="col-4">
+              <div class="form-group">
+                <label class="pb-1">C° Socio de Negocio - Dato requerido</label>
+                <input
+                  formControlName="CustomerCode"
+                  readonly
+                  class="form-control p-2"
+                />
+              </div>
+            </div>
+            <div class="col-4">
+              <div class="form-group">
+                <label class="pb-1">Nombre del Socio - Dato requerido</label>
+                <input
+                  readonly
+                  formControlName="CustomerName"
+                  class="form-control p-2"
+                />
+              </div>
+            </div>
+            <div class="col-4">
+              <div class="form-group">
+                <label class="pb-1">N° de Telefono - Dato no requerido</label>
+                <input formControlName="Telephone" class="form-control p-2" />
+              </div>
+            </div>
+          </div>
+
+          <div class="row p-1 px-2">
+            <div class="col-4">
+              <div class="form-group">
+                <label class="pb-1">Destino de factura - Dato requerido</label>
+                <input
+                  formControlName="BPBillToAddress"
+                  class="form-control p-2"
+                />
+                <app-error-message
+                  [field]="$any(serviceForm.get('BPBillToAddcress'))"
+                  error="required"
+                  message="Dirección de factura requerida"
+                ></app-error-message>
+              </div>
+            </div>
+            <div class="col-4">
+              <div class="form-group">
+                <label class="pb-1">Provincia/Ciudad - Dato no requerido</label>
+                <input
+                  readonly
+                  formControlName="City"
+                  class="form-control p-2"
+                />
+              </div>
+            </div>
+            <div class="col-4">
+              <div class="form-group">
+                <label class="pb-1">Correo Electrónico - Dato requerido</label>
+                <input formControlName="BPeMail" class="form-control p-2" />
+                <app-error-message
+                  [field]="$any(serviceForm.get('BPeMail'))"
+                  error="required"
+                  message="Email requerido"
+                ></app-error-message>
+              </div>
+            </div>
+          </div>
+
+          <div class="row p-1 px-2">
+            <div class="col-4">
+              <div class="form-group">
+                <label class="pb-1">C° Articulo - Dato requerido</label>
+                <input
+                  formControlName="ItemCode"
+                  readonly
+                  class="form-control p-2"
+                />
+                <app-error-message
+                  [field]="$any(serviceForm.get('ItemCode'))"
+                  error="required"
+                  message="C° del articulo requerido"
+                ></app-error-message>
+              </div>
+            </div>
+            <div class="col-4">
+              <div class="form-group">
+                <label class="pb-1">Descripción - Dato requerido</label>
+                <input
+                  formControlName="ItemDescription"
+                  readonly
+                  class="form-control p-2"
+                />
+                <app-error-message
+                  [field]="$any(serviceForm.get('ItemDescription'))"
+                  error="required"
+                  message="Descripción del articulo requerida"
+                ></app-error-message>
+              </div>
+            </div>
+            <div class="col-4">
+              <div class="form-group">
+                <label class="pb-1">Chasis - Dato requerido</label>
+                <input
+                  formControlName="U_Chasis"
+                  appUpperCase
+                  class="form-control p-2"
+                />
+                <app-error-message
+                  [field]="$any(serviceForm.get('U_Chasis'))"
+                  error="required"
+                  message="Chasis requerido"
+                ></app-error-message>
+              </div>
+            </div>
+          </div>
+
+          <div class="row p-1 px-2">
+            <div class="col-4">
+              <div class="form-group">
+                <label class="pb-1">Motor - Dato requerido</label>
+                <input
+                  formControlName="U_Motor"
+                  appUpperCase
+                  class="form-control p-2"
+                />
+                <app-error-message
+                  [field]="$any(serviceForm.get('U_Motor'))"
+                  error="required"
+                  message="Motor requerido"
+                ></app-error-message>
+              </div>
+            </div>
+            <div class="col-4">
+              <div class="form-group">
+                <label class="pb-1">Patente - Dato no requerido</label>
+                <input
+                  formControlName="U_Patente"
+                  readonly
+                  class="form-control p-2"
+                />
+                <app-error-message
+                  [field]="$any(serviceForm.get('U_Chasis'))"
+                  error="required"
+                  message="Chasis requerido"
+                ></app-error-message>
+              </div>
+            </div>
+            <div class="col-4">
+              <div class="form-group">
+                <label class="pb-1">Serie</label>
+                <input
+                  formControlName="InternalSerialNum"
+                  appUpperCase
+                  readonly
+                  class="form-control p-2"
+                />
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <div
+        class="tab-pane fade"
+        id="warrantydata"
+        role="tabpanel"
+        aria-labelledby="warrantydata-tab"
+      >
+        <form [formGroup]="serviceForm">
+          <div class="row p-1 px-2">
+            <div class="col-12">
+              <div class="form-group">
+                <label class="pb-1"
+                  >Estado de la garantía - Dato requerido</label
+                >
+                <select
+                  formControlName="U_EstadoGrtia"
+                  class="form-control p-2"
+                >
+                  <option hidden></option>
+                  <option
+                    *ngFor="let info of coreState.warranty"
+                    [value]="info.value"
+                  >
+                    {{ info.name }}
+                  </option>
+                </select>
+                <app-error-message
+                  [field]="$any(serviceForm.get('U_EstadoGrtia'))"
+                  error="required"
+                  message="Estado de la garantía requerido"
+                ></app-error-message>
+              </div>
+            </div>
+          </div>
+
+          <div class="row p-1 px-2">
+            <div class="col-6">
+              <div class="form-group">
+                <label class="pb-1">Pedido Realizado</label>
+                <select
+                  formControlName="U_PedidoRealizado"
+                  class="form-control p-2"
+                >
+                  <option *ngFor="let opt of coreState.options" [value]="opt">
+                    {{ opt }}
+                  </option>
+                </select>
+                <app-error-message
+                  [field]="$any(serviceForm.get('U_PedidoRealizado'))"
+                  error="required"
+                  message="Indicar si el pedido fue realizado o no."
+                ></app-error-message>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="form-group">
+                <label class="pb-1">N° Interno del pedido</label>
+                <input
+                  formControlName="U_NumeroPedigoG"
+                  class="form-control p-2"
+                  addParsedValue
+                />
+                <app-error-message
+                  [field]="$any(serviceForm.get('U_NumeroPedigoG'))"
+                  error="required"
+                  message="N° del pedido requerido."
+                ></app-error-message>
+              </div>
+            </div>
+          </div>
+
+          <div class="row p-1 px-2">
+            <div class="col-6">
+              <div class="form-group">
+                <label class="pb-1">Fecha del reclamo al proveedor</label>
+                <input
+                  formControlName="U_FechaPedidoG"
+                  class="form-control p-2"
+                />
+                <app-error-message
+                  [field]="$any(serviceForm.get('U_FechaPedidoG'))"
+                  error="required"
+                  message="Fecha del reclamo al proveedor requerida."
+                ></app-error-message>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="form-group">
+                <label class="pb-1">Repuesto - Cumplido</label>
+                <select
+                  class="form-control p-2"
+                  formControlName="U_CumplidoGrtia"
+                >
+                  <option *ngFor="let opt of coreState.options" [value]="opt">
+                    {{ opt }}
+                  </option>
+                </select>
+                <app-error-message
+                  [field]="$any(serviceForm.get('U_CumplidoGrtia'))"
+                  error="required"
+                  message="Indicar si el repuesto ya se ingreso o no."
+                ></app-error-message>
+              </div>
+            </div>
+          </div>
+
+          <div class="row p-1 px-2">
+            <div class="col-6">
+              <div class="form-group">
+                <label>Observaciones</label>
+                <textarea
+                  formControlName="U_ObservaGrtia"
+                  class="form-control p-2"
+                ></textarea>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="form-group">
+                <label>Responsable de la gestión de garantía</label>
+                <textarea
+                  formControlName="U_UsuarioGrtia"
+                  class="form-control p-2"
+                ></textarea>
+              </div>
+            </div>
+          </div>
+
+          <div class="row p-1 px-2">
+            <div class="href-file">
+              <div class="w-100 file-pdf-container mt-4">
+                <label class="custom-file-upload pt-2">
+                  <i class="fas fa-file-image"></i>
+                  <input type="file" (change)="manageFile($event)" />
+                  Cargar Archivo (Imagen o PDF)
+                </label>
+              </div>
+            </div>
+            <h5 class="pt-2" *ngIf="!!serviceForm.value.U_ArchivoAdj === true">Imagenes Cargadas:</h5>
+            <div
+              class="img-container"
+              *ngIf="!!serviceForm.value.U_ArchivoAdj === true"
+            >
+              <div
+                class="img-selected"
+                *ngFor="
+                  let img of serviceForm.value.U_ArchivoAdj.split(';;');
+                  let ind = index
+                "
+              >
+                <button
+                  *ngIf="ind < serviceForm.value.U_ArchivoAdj.split(';;').length - 1"
+                  (click)="deleteImgCharged(img)"
+                  class="btn-paradigm-secondary m-1"
+                >
+                  Quitar
+                </button>
+                <img class="warranty-image" [src]="img" />
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <div
+        class="tab-pane fade"
+        id="calltypedata"
+        role="tabpanel"
+        aria-labelledby="calltypedata-tab"
+      >
+        <form [formGroup]="serviceForm">
+          <div class="row p-1 px-2">
+            <div class="col-6">
+              <div class="form-group">
+                <label class="pb-1"
+                  >Estado de la Llamada - Dato requerido</label
+                >
+                <select
+                  class="form-control p-2"
+                  formControlName="Status"
+                  addParsedValue
+                >
+                  <option
+                    *ngFor="let status of coreState.statusCall"
+                    [value]="status.value"
+                  >
+                    {{ status.name }}
+                  </option>
+                </select>
+                <app-error-message
+                  [field]="$any(serviceForm.get('Status'))"
+                  error="required"
+                  message="Estado requerido"
+                ></app-error-message>
+              </div>
+            </div>
+
+            <div class="col-6">
+              <div class="form-group">
+                <label class="pb-1">Prioridad - Dato requerido</label>
+                <select
+                  class="form-control p-2"
+                  formControlName="Priority"
+                  addParsedValue
+                >
+                  <option
+                    *ngFor="let priority of coreState.priority"
+                    [value]="priority.value"
+                  >
+                    {{ priority.name }}
+                  </option>
+                </select>
+                <app-error-message
+                  [field]="$any(serviceForm.get('Priority'))"
+                  error="required"
+                  message="Nivel de prioridad requerido"
+                ></app-error-message>
+              </div>
+            </div>
+          </div>
+
+          <div class="row p-1 px-2">
+            <div class="col-12">
+              <div class="form-group">
+                <label class="pb-1">Kilometros - Dato requerido</label>
+                <input
+                  type="number"
+                  formControlName="U_EstadoGrtia"
+                  class="form-control p-2"
+                />
+                <app-error-message
+                  [field]="$any(serviceForm.get('U_Kilometraje'))"
+                  error="required"
+                  message="Kilometraje requerido"
+                ></app-error-message>
+              </div>
+            </div>
+          </div>
+
+          <div class="row p-1 px-2">
+            <div class="col-6">
+              <div class="form-group">
+                <label class="pb-1">Asunto - Dato requerido</label>
+                <input formControlName="Subject" class="form-control p-2" />
+                <app-error-message
+                  [field]="$any(serviceForm.get('Subject'))"
+                  error="required"
+                  message="Asunto requerido"
+                ></app-error-message>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="form-group">
+                <label class="pb-1">Detalle - Dato requerido</label>
+                <input formControlName="Description" class="form-control p-2" />
+                <app-error-message
+                  [field]="$any(serviceForm.get('Description'))"
+                  error="required"
+                  message="Comentario requerido"
+                ></app-error-message>
+              </div>
+            </div>
+          </div>
+
+          <div class="row p-1 px-2">
+            <div class="col-12">
+              <div class="form-group">
+                <label class="pb-1"
+                  >Resolución - Dato requerido solo si se quiere cerrar el
+                  service</label
+                >
+                <input
+                  formControlName="Resolution"
+                  [readonly]="serviceForm.value.Status === -3"
+                  class="form-control p-2"
+                />
+                <app-error-message
+                  [field]="$any(serviceForm.get('Resolution'))"
+                  error="required"
+                  message="Resolución requerida"
+                ></app-error-message>
+              </div>
+            </div>
+          </div>
+
+          <div class="row p-1 px-2">
+            <div class="col-4" *ngIf="coreState.origins.length > 0">
+              <div class="form-group">
+                <label class="pb-1">Origen - Dato requerido</label>
+                <select
+                  class="form-control p-2"
+                  formControlName="Origin"
+                  addParsedValue
+                >
+                  <option
+                    *ngFor="let origin of coreState.origins"
+                    [value]="origin.OriginID"
+                  >
+                    {{ origin.Name }}
+                  </option>
+                </select>
+                <app-error-message
+                  [field]="$any(serviceForm.get('Origin'))"
+                  error="required"
+                  message="Origen requerido"
+                ></app-error-message>
+              </div>
+            </div>
+            <div class="col-4" *ngIf="coreState.problemType.length > 0">
+              <div class="form-group">
+                <label class="pb-1">Tipo de Problema - Dato requerido</label>
+                <select
+                  formControlName="ProblemType"
+                  (ngModelChange)="clearSubProblemType()"
+                  class="form-control p-2"
+                  addParsedValue
+                >
+                  <option hidden></option>
+                  <option
+                    *ngFor="let problemType of coreState.problemType"
+                    [value]="problemType.ProblemTypeID"
+                  >
+                    {{ problemType.Name }}
+                  </option>
+                </select>
+                <app-error-message
+                  [field]="$any(serviceForm.get('ProblemType'))"
+                  error="required"
+                  message="Tipo de problema requerido"
+                ></app-error-message>
+              </div>
+            </div>
+            <div class="col-4" *ngIf="coreState.subProblemType.length > 0">
+              <div class="form-group">
+                <label class="pb-1">Subtipo de Problema - Dato requerido</label>
+                <select
+                  formControlName="ProblemSubType"
+                  class="form-control p-2"
+                  addParsedValue
+                >
+                  <option hidden></option>
+                  <option
+                    *ngFor="
+                      let subProblemFilter of coreState.subProblemType
+                        | subProblemFilter
+                          : serviceForm.value.ProblemType
+                          : coreState.problemType
+                    "
+                    [value]="subProblemFilter.ProblemSubTypeID"
+                  >
+                    {{ subProblemFilter.Name }}
+                  </option>
+                </select>
+                <app-error-message
+                  [field]="$any(serviceForm.get('ProblemSubType'))"
+                  error="required"
+                  message="Subtipo de problema requerido"
+                ></app-error-message>
+              </div>
+            </div>
+          </div>
+
+          <div class="row p-1 px-2">
+            <div class="col-4" *ngIf="coreState.callTypes.length > 0">
+              <div class="form-group">
+                <label class="pb-1">Tipo de Llamada - Dato requerido</label>
+                <select
+                  class="form-control p-2"
+                  formControlName="CallType"
+                  addParsedValue
+                >
+                  <option
+                    *ngFor="let callType of coreState.callTypes"
+                    [value]="callType.CallTypeID"
+                  >
+                    {{ callType.Name }}
+                  </option>
+                </select>
+                <app-error-message
+                  [field]="$any(serviceForm.get('CallType'))"
+                  error="required"
+                  message="Tipo de llamada requerida"
+                ></app-error-message>
+              </div>
+            </div>
+            <div class="col-4" *ngIf="coreState.employees.length > 0">
+              <div class="form-group">
+                <label class="pb-1">Técnico - Dato requerido</label>
+                <select
+                  formControlName="TechnicianCode"
+                  class="form-control p-2 selectpicker"
+                  addParsedValue
+                >
+                  <option
+                    *ngFor="let employee of coreState.employees"
+                    [value]="employee.EmployeeID"
+                  >
+                    {{ employee.FirstName }} {{ employee.LastName }}
+                  </option>
+                </select>
+                <app-error-message
+                  [field]="$any(serviceForm.get('TechnicianCode'))"
+                  error="required"
+                  message="Técnico requerido"
+                ></app-error-message>
+              </div>
+            </div>
+            <div class="col-4">
+              <div class="form-group">
+                <label class="pb-1">Alarma - Dato requerido</label>
+                <select formControlName="U_Alarma" class="form-control p-2">
+                  <option *ngFor="let opt of coreState.options" [value]="opt">
+                    {{ opt }}
+                  </option>
+                </select>
+                <app-error-message
+                  [field]="$any(serviceForm.get('U_Alarma'))"
+                  error="required"
+                  message="Posesión de alarma requerida"
+                ></app-error-message>
+              </div>
+            </div>
+          </div>
+
+          <div class="row p-1 px-2">
+            <div class="col-4">
+              <div class="form-group">
+                <label class="pb-1">Casco - Dato requerido</label>
+                <select class="form-control p-2" formControlName="U_Casco">
+                  <option *ngFor="let opt of coreState.options" [value]="opt">
+                    {{ opt }}
+                  </option>
+                </select>
+                <app-error-message
+                  [field]="$any(serviceForm.get('U_Casco'))"
+                  error="required"
+                  message="Posesión de casco requerida"
+                ></app-error-message>
+              </div>
+            </div>
+            <div class="col-4">
+              <div class="form-group">
+                <label class="pb-1">Kit de Herramientas - Dato requerido</label>
+                <select
+                  formControlName="U_Kit_Herramientas"
+                  class="form-control p-2"
+                >
+                  <option *ngFor="let opt of coreState.options" [value]="opt">
+                    {{ opt }}
+                  </option>
+                </select>
+                <app-error-message
+                  [field]="$any(serviceForm.get('U_Kit_Herramientas'))"
+                  error="required"
+                  message="Posesión de kit de herramientas requerido"
+                ></app-error-message>
+              </div>
+            </div>
+            <div class="col-4">
+              <div class="form-group">
+                <label class="pb-1">Faltante - Dato requerido</label>
+                <select formControlName="U_Faltante" class="form-control p-2">
+                  <option *ngFor="let opt of coreState.options" [value]="opt">
+                    {{ opt }}
+                  </option>
+                </select>
+                <app-error-message
+                  [field]="$any(serviceForm.get('U_Faltante'))"
+                  error="required"
+                  message="Parte faltante requerida"
+                ></app-error-message>
+              </div>
+            </div>
+          </div>
+
+          <div class="row p-1 px-2">
+            <div class="col-4">
+              <div class="form-group">
+                <label class="pb-1">Rayado - Dato requerido</label>
+                <select class="form-control p-2" formControlName="U_Rayado">
+                  <option *ngFor="let opt of coreState.options" [value]="opt">
+                    {{ opt }}
+                  </option>
+                </select>
+                <app-error-message
+                  [field]="$any(serviceForm.get('U_Rayado'))"
+                  error="required"
+                  message="Posesión de rayadura requerida"
+                ></app-error-message>
+              </div>
+            </div>
+            <div class="col-4">
+              <div class="form-group">
+                <label class="pb-1">Rotura - Dato requerido</label>
+                <select formControlName="U_Rotura" class="form-control p-2">
+                  <option *ngFor="let opt of coreState.options" [value]="opt">
+                    {{ opt }}
+                  </option>
+                </select>
+                <app-error-message
+                  [field]="$any(serviceForm.get('U_Rotura'))"
+                  error="required"
+                  message="Posesión de rotura requerida"
+                ></app-error-message>
+              </div>
+            </div>
+            <div class="col-4">
+              <div class="form-group">
+                <label class="pb-1">Manchado - Dato requerido</label>
+                <select formControlName="U_Manchado" class="form-control p-2">
+                  <option *ngFor="let opt of coreState.options" [value]="opt">
+                    {{ opt }}
+                  </option>
+                </select>
+                <app-error-message
+                  [field]="$any(serviceForm.get('U_Manchado'))"
+                  error="required"
+                  message="Posesión de manchadura requerida"
+                ></app-error-message>
+              </div>
+            </div>
+          </div>
+
+          <div class="row p-1 px-2">
+            <div class="col-12">
+              <div class="form-group">
+                <label class="pb-1">Nivel Combustible - Dato requerido</label>
+                <select
+                  formControlName="U_Nivel_Combustible"
+                  class="form-control p-2"
+                >
+                  <option
+                    *ngFor="let opt of coreState.combustibleOption"
+                    [value]="opt.value"
+                  >
+                    {{ opt.name }}
+                  </option>
+                </select>
+                <app-error-message
+                  [field]="$any(serviceForm.get('U_Nivel_Combustible'))"
+                  error="required"
+                  message="Nivel de combustible requerido"
+                ></app-error-message>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <div
+        class="tab-pane fade"
+        id="operations"
+        role="tabpanel"
+        aria-labelledby="operations-tab"
+      >
+        <form [formGroup]="transferForm">
+          <div class="row p-1 px-2">
+            <div class="col-6">
+              <div class="form-group">
+                <label class="pb-1">Socio de negocios</label>
+                <input
+                  appUpperCase
+                  formControlName="CardCode"
+                  (keydown)="getSocio($event)"
+                  class="form-control p-2"
+                />
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="form-group">
+                <label class="pb-1">Dirección</label>
+                <input
+                  readonly
+                  formControlName="Address"
+                  class="form-control p-2"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div class="row p-1 px-2">
+            <div class="col-6">
+              <div class="form-group">
+                <label class="pb-1">Nombre</label>
+                <input
+                  readonly
+                  formControlName="CardName"
+                  class="form-control p-2"
+                />
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="form-group">
+                <label class="pb-1">Punto de Emisión</label>
+                <input
+                  readonly
+                  formControlName="PointOfIssueCode"
+                  class="form-control p-2"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div class="row p-1 px-2">
+            <div class="col-6">
+              <div class="form-group">
+                <label class="pb-1">Almacén Origen</label>
+                <select
+                  readonly
+                  formControlName="FromWarehouse"
+                  class="form-control p-2"
+                >
+                  <option [value]="'047'">SUC-EXPRESS (TUCUMÁN)</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-6" *ngIf="garantiaState.secondWarehouse.length > 0">
+              <div class="form-group">
+                <label class="pb-1">Almacén Destino</label>
+                <select class="form-control p-2" (change)="getWarehouseFriend($event)">
+                  <option *ngFor="let warehouse of garantiaState.secondWarehouse" [value]="warehouse.WhsCode">
+                    {{ warehouse.WhsCode }} - {{ warehouse.WhsName }}
+                  </option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="row p-1 px-2">
+            <div class="col-6">
+              <div class="form-group">
+                <label class="pb-1">ID del Almacén</label>
+                <input
+                  readonly
+                  formControlName="BPLID"
+                  class="form-control p-2"
+                />
+              </div>
+            </div>
+
+            <div class="col-6">
+              <div class="form-group">
+                <label class="pb-1">N de Almacén Destino</label>
+                <input
+                  formControlName="ToWarehouse"
+                  readonly
+                  class="form-control p-2"
+                />
+              </div>
+            </div>
+          </div>
+        </form>
+        <form [formGroup]="searchItemInStock">
+          <div class="row p-1 px-2">
+            <div class="col-4">
+              <div class="form-group">
+                <label>Buscar por Código/Nombre del artículo</label>
+                <input formControlName="search" class="form-control p-2" />
+              </div>
+            </div>
+            <div class="col-2 d-flex align-items-end">
+              <button
+                class="btn-paradigm mt-1"
+                [disabled]="!searchItemInStock.valid"
+                (click)="getItemInStock()"
+              >
+                Buscar
+              </button>
+            </div>
+          </div>
+          <div class="row p-1 px-2" *ngIf="garantiaState.items.length > 0">
+            <app-table
+              [headers]="[
+                'Items encontrados',
+                'Stock',
+                'Cantidad Elegida',
+                'Acción'
+              ]"
+            >
+              <tr
+                class="data-row"
+                *ngFor="
+                  let item of garantiaState.items
+                    | slice
+                      : (secondPageIndex - 1) * pageSize
+                      : (secondPageIndex - 1) * pageSize + pageSize
+                "
+              >
+                <td class="item-col-1">
+                  {{ item.ItemCode }} - {{ item.ItemName }}
+                </td>
+                <td class="item-col-2">
+                  {{ totalParsed(item.Stock) }}
+                </td>
+                <td class="item-col-3">
+                  <input
+                    type="number"
+                    class="form-control"
+                    name="Quantity"
+                    [disabled]="item.ManSerNum !== 'Y' && item.Stock < 1"
+                    (change)="getNewQuantityForItems(item.id__, $event)"
+                    [max]="item.Stock"
+                    [value]="item.Quantity"
+                  />
+                </td>
+                <td class="item-col-4 actions-container">
+                  <span
+                    class="edit-action"
+                    *ngIf="item.ManSerNum !== 'Y' && item.Stock >= 1"
+                    (click)="addItemForStockTransfer(item)"
+                  >
+                    Agregar
+                  </span>
+                  <span *ngIf="item.ManSerNum !== 'Y' && item.Stock < 1">
+                    Sin stock
+                  </span>
+                  <span
+                    class="edit-action"
+                    *ngIf="item.ManSerNum === 'Y' && item.Stock >= 1"
+                    (click)="chargeMotorbikeSeries(item.ItemCode)"
+                  >
+                    Cargar Serie
+                  </span>
+                  <span *ngIf="item.ManSerNum === 'Y' && item.Stock < 1">
+                    Sin stock
+                  </span>
+                </td>
+              </tr>
+            </app-table>
+            <div class="d-flex justify-content-center item-align-center pt-2">
+              <ngb-pagination
+                [collectionSize]="garantiaState.items.length"
+                [(page)]="secondPageIndex"
+                [pageSize]="pageSize"
+              ></ngb-pagination>
+            </div>
+          </div>
+
+          <div class="row p-1 px-2" *ngIf="garantiaState.series.length > 0">
+            <app-table
+              [headers]="[
+                'Item cargado por serie',
+                'Chasis',
+                'Serie',
+                'Acción'
+              ]"
+            >
+              <tr class="data-row" *ngFor="let item of garantiaState.series">
+                <td class="item-col-1">
+                  {{ item.ItemCode }} - {{ item.ItemName }}
+                </td>
+                <td class="item-col-2">
+                  {{ item.U_Chasis }}
+                </td>
+                <td class="item-col-3">
+                  {{ item.IntrSerial }}
+                </td>
+                <td class="item-col-4 actions-container">
+                  <span class="edit-action" (click)="addSerialToTransfer(item)">
+                    Agregar
+                  </span>
+                </td>
+              </tr>
+            </app-table>
+          </div>
+
+          <div
+            class="row p-1 px-2"
+            *ngIf="transferForm.value.StockTransferLines.length > 0"
+          >
+            <app-table
+              [headers]="[
+                'Items selecionados',
+                'Cantidad a Transferir',
+                'Serie',
+                'Acción'
+              ]"
+            >
+              <tr
+                class="data-row"
+                *ngFor="let item of transferForm.value.StockTransferLines"
+              >
+                <td class="item-col-1">
+                  {{ item.ItemCode }} - {{ item.ItemDescription }}
+                </td>
+                <td class="item-col-2">
+                  {{ item.Quantity }}
+                </td>
+                <td class="item-col-3">
+                  {{
+                    item.SerialNumbers.length > 0
+                      ? item.SerialNumbers[0].InternalSerialNumber
+                      : "No posee"
+                  }}
+                </td>
+                <td class="item-col-4 actions-container">
+                  <span
+                    class="history-action"
+                    (click)="removeItemSelected(item.ItemCode)"
+                  >
+                    Quitar
+                  </span>
+                </td>
+              </tr>
+            </app-table>
+          </div>
+        </form>
+      </div>
+
+      <div
+        class="tab-pane fade"
+        id="combos"
+        role="tabpanel"
+        aria-labelledby="combos-tab"
+      >
+        <div
+          class="row p-1 px-2"
+          *ngIf="
+            serviceForm.value.ServiceCallActivities &&
+            serviceForm.value.ServiceCallActivities.length > 0
+          "
+        >
+          <h5 class="pb-2">Actividades asociadas a la llamada de servicio:</h5>
+          <app-table [headers]="['C° de la Actividad', 'Consultar']">
+            <tr
+              class="data-row"
+              *ngFor="let item of serviceForm.value.ServiceCallActivities"
+            >
+              <td class="item-col-1">
+                {{ item.ActivityCode }}
+              </td>
+              <td class="item-col-2 actions-container">
+                <span
+                  class="edit-action"
+                  (click)="activityConsult(item.ActivityCode)"
+                >
+                  Consultar
+                </span>
+              </td>
+            </tr>
+          </app-table>
+        </div>
+        <div
+          class="row p-1 px-2"
+          *ngIf="garantiaState.itemsExistInService.length > 0"
+        >
+          <h5 class="pb-2">
+            Articulos Seleccionados para la Realización del Service:
+          </h5>
+          <app-table [headers]="headerItemExist">
+            <tr
+              class="data-row"
+              *ngFor="let item of garantiaState.itemsExistInService"
+            >
+              <td class="item-col-1">
+                {{ item.ItemCode }}
+              </td>
+              <td class="item-col-2">
+                {{ item.ItemDescription }}
+              </td>
+              <td class="item-col-3">
+                {{ item.MeasureUnit }}
+              </td>
+              <td class="item-col-4">
+                {{ item.Quantity }}
+              </td>
+            </tr>
+          </app-table>
+        </div>
+        <div
+          class="row p-1 px-2"
+          *ngIf="!!serviceForm.value.ClosingDate === false"
+        >
+          <h5>Inventario:</h5>
+          <form [formGroup]="searchInOperationForm" class="row pb-2">
+            <div class="col-2">
+              <div class="form-group">
+                <label class="pb-1">Buscar por</label>
+                <select formControlName="searchType" class="form-control p-2">
+                  <option value="Descripción">Descripción</option>
+                  <option value="Código">Código</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-2">
+              <div class="form-group">
+                <label class="pb-1">Ingresar aquí</label>
+                <input formControlName="item" class="form-control p-2" />
+              </div>
+            </div>
+            <div class="col-2 d-flex align-items-end">
+              <button
+                class="btn-paradigm mt-1"
+                [disabled]="!searchInOperationForm.valid"
+                (click)="getItemsFromOperation()"
+              >
+                Buscar
+              </button>
+            </div>
+          </form>
+          <app-table
+            [headers]="['Items Encontrados', 'Acción']"
+            *ngIf="garantiaState.itemsFromOperations.length > 0"
+          >
+            <tr
+              class="data-row"
+              *ngFor="
+                let item of garantiaState.itemsFromOperations
+                  | slice
+                    : (pageIndex - 1) * pageSize
+                    : (pageIndex - 1) * pageSize + pageSize
+              "
+            >
+              <td class="item-col-1">
+                {{ item.ItemCode }} - {{ item.ItemName }} |
+                {{ item.SalesUnit }}
+              </td>
+              <td class="item-col-2 actions-container">
+                <span
+                  class="edit-action"
+                  (click)="consultStockAndAddItem(item)"
+                >
+                  Agregar
+                </span>
+              </td>
+            </tr>
+          </app-table>
+          <div
+            class="d-flex justify-content-center item-align-center py-2"
+            *ngIf="garantiaState.itemsFromOperations.length > 0"
+          >
+            <ngb-pagination
+              [collectionSize]="garantiaState.itemsFromOperations.length"
+              [(page)]="pageIndex"
+              [pageSize]="pageSize"
+            ></ngb-pagination>
+          </div>
+          <app-table
+            [headers]="['Items Seleccionados', 'Cantidad', 'Acción']"
+            *ngIf="sales.DocumentLines.length > 0"
+          >
+            <tr class="data-row" *ngFor="let item of sales.DocumentLines">
+              <td class="item-col-1">
+                {{ item.ItemCode }} - {{ item.ItemName }} |
+                {{ item.MeasureUnit }}
+              </td>
+              <td class="item-col-2">
+                <input
+                  class="form-control"
+                  [value]="item.Quantity"
+                  (change)="
+                    changeValueQuantityFromItemInSale(item.ItemCode, $event)
+                  "
+                />
+              </td>
+              <td class="item-col-3 actions-container">
+                <span
+                  class="history-action"
+                  (click)="removeFromSale(item.ItemCode)"
+                >
+                  Quitar
+                </span>
+              </td>
+            </tr>
+          </app-table>
+        </div>
+      </div>
+    </div>
+
+    <div class="pb-4 px-4 d-flex justify-content-end align-items-center">
+      <button
+        type="button"
+        class="btn-paradigm-secondary m-1"
+        (click)="dismiss()"
+      >
+        Cancelar
+      </button>
+      <button
+        type="button"
+        class="btn-paradigm m-1"
+        *ngIf="!!serviceForm.value.ClosingDate === false"
+        (click)="editWarrantyService()"
+      >
+        Guardar
+      </button>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #modalJustView let-modal>
+  <div class="pt-4 px-3">
+    <div>
+      <h4>Service con el ID: {{ serviceSelected.ServiceCallID }}</h4>
+    </div>
+  </div>
+  <div class="w-100 p-4">
+    <ul class="list-group mx-2 pb-2">
+      <li class="list-group-item">
+        <span><mark>Datos del Socio</mark>:</span>
+        {{ serviceSelected.CustomerCode }} - {{ serviceSelected.CustomerName }}
+        <mark>|</mark> Tel: {{ serviceSelected.Telephone }} <mark>|</mark> Prov:
+        {{ serviceSelected.City }} <mark>|</mark> Email:
+        {{ serviceSelected.BPeMail }}
+      </li>
+      <li class="list-group-item">
+        <span><mark>Datos de la Moto:</mark></span>
+        {{ serviceSelected.ItemCode }} - {{ serviceSelected.ItemDescription }}
+        <mark>|</mark> Chasis: {{ serviceSelected.U_Chasis }}
+        <mark>|</mark> Motor: {{ serviceSelected.U_Motor }}
+        <mark>|</mark> Serie: {{ serviceSelected.InternalSerialNum }}
+      </li>
+      <li class="list-group-item">
+        <span><mark>Datos de la garantía</mark></span
+        >. <mark>|</mark> Pedido Realizado:
+        {{
+          serviceSelected.U_PedidoRealizado === null
+            ? "No"
+            : serviceSelected.U_PedidoRealizado
+        }}
+        <mark>|</mark> N° Interno del Pedido:
+        {{
+          serviceSelected.U_NumeroPedigoG === null
+            ? "No cargado"
+            : serviceSelected.U_NumeroPedigoG
+        }}
+        <mark>|</mark> Fecha del reclamo al proveedor:
+        {{
+          serviceSelected.U_FechaPedidoG === null
+            ? "Aún sin cargar"
+            : serviceSelected.U_FechaPedidoG
+        }}
+        <mark>|</mark> Repuesto Cumplido:
+        {{
+          serviceSelected.U_CumplidoGrtia === null
+            ? "No"
+            : serviceSelected.U_CumplidoGrtia
+        }}
+        <mark>|</mark> Responsable de la Gestión de Garantía:
+        {{
+          serviceSelected.U_UsuarioGrtia === null
+            ? "Aún sin cargar"
+            : serviceSelected.U_UsuarioGrtia
+        }}
+        <mark>|</mark> Observaciones:
+        {{
+          serviceSelected.U_ObservaGrtia === null
+            ? "Aún sin cargar"
+            : serviceSelected.U_ObservaGrtia
+        }}
+      </li>
+    </ul>
+  </div>
+</ng-template>

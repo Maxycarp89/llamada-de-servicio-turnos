@@ -1,0 +1,31 @@
+<div class="pt-4 ">
+    <h4>Resumen de Turnos</h4>
+  </div>
+  <div class="row p-4 shadow">
+    <div class="col-12 col-lg-3 col-md-6 col-sm-9 p-2 d-flex justify-content-center">
+      <app-widget widgetType="total-sales-solid"></app-widget>
+    </div>
+    <div class="col-12 col-lg-3  col-md-6 col-sm-9 p-2 d-flex justify-content-center">
+      <app-widget widgetType="month-sales-solid"></app-widget>
+    </div>
+    <div class="col-12 col-lg-3 col-md-6 col-sm-9 p-2 d-flex justify-content-center">
+      <app-widget widgetType="week-sales-solid"></app-widget>
+    </div>
+    
+    <div class="col-12 col-lg-3  col-md-6 col-sm-9 p-2 d-flex justify-content-center">
+        <app-widget widgetType="refunds-solid"></app-widget>
+    </div>
+</div>
+
+<div class="demo-button-container p-2">
+  <button mat-raised-button  class="demo-button">
+    Add turn
+  </button >
+  <button
+      mat-raised-button
+      class="demo-button">
+    Remove turn
+  </button>
+</div>
+
+<app-table [headers]="headers"> </app-table>

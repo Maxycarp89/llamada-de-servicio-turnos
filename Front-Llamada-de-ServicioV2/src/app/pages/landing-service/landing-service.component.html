@@ -1,0 +1,1243 @@
+<mat-toolbar class="container banner">
+  <img
+    src="../../../assets/images/logos/Service.png"
+    alt="service"
+    width="200px"
+    height="70px"
+  />
+</mat-toolbar>
+<mat-grid-list cols="1" rowHeight="2:1">
+  <mat-grid-tile>
+    <div>
+      <img src="../../../assets/images/foto2.jpg" alt="" />
+    </div>
+  </mat-grid-tile>
+</mat-grid-list>
+
+<h2>Ingrese su DNI</h2>
+<form class="input-group searchbar-container" [formGroup]="searchForm">
+  <div class="input-field">
+    <i class="fa-solid fa-filter"></i>
+    <select
+      id="type"
+      formControlName="type"
+      placeholder="Status"
+      (change)="clearState()"
+    >
+      <option value="DNI">DNI</option>
+      <option value="Chasis">Chasis</option>
+    </select>
+  </div>
+  <div class="input-field">
+    <i class="fas fa-search"></i>
+    <input id="search" formControlName="search" placeholder="Search" />
+  </div>
+  <button
+    class="btn solid"
+    (click)="searchCustomerMotorbike()"
+    [disabled]="!searchForm.valid"
+  >
+    Buscar
+  </button>
+</form>
+<div
+  class="card page-card-motos"
+  *ngIf="motosState.customer.length > 0 && motosState.error === null"
+>
+  <div
+    class="client-motorbike-info"
+    *ngFor="let customer of motosState.customer"
+  >
+    <span>Nombre del cliente: {{ customer.CardName }}</span
+    ><br />
+    <span>DNI/CUIL del cliente: {{ customer.FederalTaxID }} </span><br />
+    <span
+      >Deseas cargar una moto?
+      <strong
+        (click)="
+          openDialogService(
+            motosState.customer[0],
+            dialogNewService,
+            '95%',
+            '95%'
+          )
+        "
+        >Toca aquí.</strong
+      >
+    </span>
+  </div>
+</div>
+<div
+  class="card page-card-motos"
+  *ngIf="motosState.motos.length > 0 || motosState.error !== null"
+>
+  <div
+    *ngIf="
+      motosState.error !== null &&
+      searchForm.value.type !== 'DNI' &&
+      searchForm.value.type !== 'Client'
+    "
+    class="client-motorbike-info"
+  >
+    <span>{{ motosState.error }}</span>
+  </div>
+  <div
+    *ngIf="
+      (motosState.error !== null && searchForm.value.type === 'DNI') ||
+      (motosState.error !== null && searchForm.value.type === 'Client')
+    "
+    class="client-motorbike-info"
+  >
+    <span
+      >{{ motosState.error }} <br />
+      Deseas cargarlo?
+      <strong (click)="openDialog(dialogNewClient, '520px', 'auto')"
+        >Toca aquí.</strong
+      ></span
+    >
+  </div>
+  <div
+    *ngIf="
+      motosState.motos.length > 0 &&
+      motosState.motos[0].DocEntry &&
+      !searchByName
+    "
+    class="client-motorbike-info"
+  >
+    <span>Nombre del Cliente: {{ motosState.motos[0].CardName }} </span><br />
+    <span>C° del Cliente: {{ motosState.motos[0].CardCode }}</span
+    ><br />
+    <span>Moto comprada en Yuhmak.</span><br />
+    <span
+      >Deseas consultar el historial de servicios?
+      <strong (click)="getHistory(motosState.motos[0].CardCode, dialogHistory)"
+        >Toca aquí.</strong
+      ></span
+    >
+  </div>
+  <div
+    *ngIf="
+      motosState.motos.length > 0 &&
+      !motosState.motos[0].DocEntry &&
+      !searchByName
+    "
+    class="client-motorbike-info"
+  >
+    <span>Nombre del Cliente: {{ motosState.motos[0].CustomerName }} </span
+    ><br />
+    <span>C° del Cliente: {{ motosState.motos[0].CustomerCode }}</span
+    ><br />
+    <span>Moto no comprada en Yuhmak.</span><br />
+    <span
+      >Deseas consultar el historial de servicios?
+      <strong
+        (click)="getHistory(motosState.motos[0].CustomerCode, dialogHistory)"
+        >Toca aquí.</strong
+      ></span
+    >
+  </div>
+  <app-table
+    *ngIf="
+      motosState.motos.length > 0 &&
+      motosState.motos[0].DocEntry &&
+      motosState.customer.length <= 0
+    "
+    [headers]="headers"
+  >
+    <tr class="tr-container" *ngFor="let customerMotorbike of motosState.motos">
+      <td class="td-item">
+        <div class="info-of-item-container">
+          {{ customerMotorbike.DocEntry }}
+        </div>
+      </td>
+      <td class="td-item" *ngIf="searchByName">
+        <div class="info-of-item-container">
+          {{ customerMotorbike.CardCode }}
+        </div>
+      </td>
+      <td class="td-item" *ngIf="searchByName">
+        <div class="info-of-item-container">
+          {{ customerMotorbike.CardName }}
+        </div>
+      </td>
+      <td class="td-item">
+        <div class="info-of-item-container">
+          {{ customerMotorbike.Dscription }}
+        </div>
+      </td>
+      <td class="td-item">
+        <div class="info-of-item-container">
+          {{
+            customerMotorbike.Color !== null
+              ? customerMotorbike.Color
+              : "No posee"
+          }}
+        </div>
+      </td>
+      <td class="td-item">
+        <div class="info-of-item-container">
+          {{
+            customerMotorbike.U_Chasis !== null
+              ? customerMotorbike.U_Chasis
+              : "No posee"
+          }}
+        </div>
+      </td>
+      <td class="td-item">
+        <div class="info-of-item-container">
+          {{
+            customerMotorbike.U_Motor !== null
+              ? customerMotorbike.U_Motor
+              : "No posee"
+          }}
+        </div>
+      </td>
+      <td class="td-item">
+        <div class="info-of-item-container">
+          {{
+            customerMotorbike.IntrSerial !== null
+              ? customerMotorbike.IntrSerial
+              : "No posee"
+          }}
+        </div>
+      </td>
+      <td class="td-item">
+        <div
+          class="info-of-item-container"
+          (click)="
+            openDialogService(customerMotorbike, dialogNewService, '98%', '98%')
+          "
+        >
+          Crear/Editar Service
+        </div>
+      </td>
+    </tr></app-table
+  >
+  <app-table
+    *ngIf="
+      motosState.motos.length > 0 &&
+      !motosState.motos[0].DocEntry &&
+      motosState.customer.length <= 0
+    "
+    [headers]="headerService"
+  >
+    <tr class="tr-container" *ngFor="let customerMotorbike of motosState.motos">
+      <td class="td-item">
+        <div class="info-of-item-container">
+          {{ customerMotorbike.ItemCode }}
+        </div>
+      </td>
+      <td class="td-item">
+        <div class="info-of-item-container">
+          {{ customerMotorbike.ItemDescription }}
+        </div>
+      </td>
+      <td class="td-item">
+        <div class="info-of-item-container">
+          {{ customerMotorbike.U_Chasis }}
+        </div>
+      </td>
+      <td class="td-item">
+        <div class="info-of-item-container">
+          {{ customerMotorbike.U_Motor }}
+        </div>
+      </td>
+      <td class="td-item">
+        <div
+          class="info-of-item-container"
+          (click)="
+            openDialogService(customerMotorbike, dialogNewService, '98%', '98%')
+          "
+        >
+          Crear Service
+        </div>
+      </td>
+    </tr>
+  </app-table>
+</div>
+
+<!---Modal para cargar clientes-->
+<ng-template #dialogNewClient let-modal>
+  <div mat-dialog>
+    <div class="dialog-header">
+      <h3>Cargar nuevo cliente</h3>
+      <i
+        class="fa fa-times"
+        role="button"
+        aria-hidden="true"
+        (click)="dismiss()"
+      ></i>
+    </div>
+    <div class="dialog-body">
+      <form [formGroup]="newClientForm" class="dialog-body">
+        <div class="inputs-container">
+          <div class="input-field">
+            <span>Apellido y Nombre</span>
+            <input
+              type="text"
+              id="CardName"
+              class="form-control"
+              formControlName="CardName"
+              placeholder="Apellido y nombre"
+            />
+            <app-error-message
+              [field]="$any(newClientForm.get('CardName'))"
+              error="required"
+              message="Apellido y nombre requerido"
+            ></app-error-message>
+          </div>
+          <div class="input-field">
+            <span>DNI/CUIT</span>
+            <input
+              type="text"
+              id="FederalTaxID"
+              class="form-control"
+              formControlName="FederalTaxID"
+              placeholder="DNI/CUIT"
+            />
+            <app-error-message
+              [field]="$any(newClientForm.get('FederalTaxID'))"
+              error="required"
+              message="DNI/CUIT requerido"
+            ></app-error-message>
+          </div>
+        </div>
+        <div class="inputs-container">
+          <div class="input-field">
+            <span>Celular</span>
+            <input
+              type="text"
+              id="Cellular"
+              class="form-control"
+              formControlName="Cellular"
+              placeholder="Celular"
+            />
+            <app-error-message
+              [field]="$any(newClientForm.get('Cellular'))"
+              error="required"
+              message="N° de celular requerido"
+            ></app-error-message>
+          </div>
+          <div class="input-field">
+            <span>Email</span>
+            <input
+              type="text"
+              id="EmailAddress"
+              class="form-control"
+              formControlName="EmailAddress"
+              placeholder="Email"
+            />
+            <app-error-message
+              [field]="$any(newClientForm.get('EmailAddress'))"
+              error="required"
+              message="Email requerido"
+            ></app-error-message>
+          </div>
+        </div>
+        <div class="inputs-container">
+          <div class="input-field">
+            <span>Tipo Cliente</span>
+            <select
+              id="U_B1SYS_VATCtg"
+              class="form-control"
+              formControlName="U_B1SYS_VATCtg"
+            >
+              <option value="CF">Consumidor Final</option>
+              <option value="EX">Exento</option>
+              <option value="RI">Responsable Inscripto</option>
+              <option value="MT">Monotributo</option>
+            </select>
+            <app-error-message
+              [field]="$any(newClientForm.get('U_B1SYS_VATCtg'))"
+              error="required"
+              message="Tipo de Cliente requerido"
+            ></app-error-message>
+          </div>
+          <div class="input-field">
+            <span>Provincia</span>
+            <select id="County" class="form-control" formControlName="County">
+              <option *ngFor="let city of cities" value="{{ city.id }}">
+                {{ city.nombre }}
+              </option>
+            </select>
+            <app-error-message
+              [field]="$any(newClientForm.get('County'))"
+              error="required"
+              message="Provincia requerida"
+            ></app-error-message>
+          </div>
+        </div>
+        <div class="inputs-container">
+          <div class="input-field">
+            <span>Localidad</span>
+            <input
+              type="text"
+              id="City"
+              class="form-control"
+              formControlName="City"
+              placeholder="Localidad"
+            />
+            <app-error-message
+              [field]="$any(newClientForm.get('City'))"
+              error="required"
+              message="Localidad requerida"
+            ></app-error-message>
+          </div>
+          <div class="input-field">
+            <span>Código Postal</span>
+            <input
+              type="text"
+              id="ZipCode"
+              class="form-control"
+              formControlName="ZipCode"
+              placeholder="Código Postal"
+            />
+            <app-error-message
+              [field]="$any(newClientForm.get('ZipCode'))"
+              error="required"
+              message="Código postal requerido"
+            ></app-error-message>
+          </div>
+        </div>
+        <div class="inputs-container-last">
+          <span>Dirección</span>
+          <input
+            type="text"
+            id="Address"
+            class="form-control"
+            formControlName="Address"
+            placeholder="Dirección"
+          />
+          <app-error-message
+            [field]="$any(newClientForm.get('Address'))"
+            error="required"
+            message="Dirección requerida"
+          ></app-error-message>
+        </div>
+        <button class="btn solid" (click)="createCustomer()">Crear</button>
+      </form>
+      <span class="success-msg" *ngIf="motosState.respMsg !== null">{{
+        motosState.respMsg
+      }}</span>
+      <span class="error-msg" *ngIf="motosState.errorRespMsg !== null">
+        {{ motosState.errorRespMsg }}
+      </span>
+    </div>
+  </div>
+</ng-template>
+
+<!---Modal para ver el historial de service del cliente-->
+<ng-template #dialogHistory let-modal>
+  <app-loading></app-loading>
+  <app-toasts aria-live="polite" aria-atomic="true"></app-toasts>
+  <div
+    mat-dialog
+    *ngIf="
+      motosState.historyService.length > 0 && motosState.failMsgHistory === null
+    "
+  >
+    <div class="dialog-header">
+      <h3>Historial de servicios del cliente</h3>
+      <i
+        class="fa fa-times"
+        role="button"
+        aria-hidden="true"
+        (click)="dismiss()"
+      ></i>
+    </div>
+    <div class="dialog-body">
+      <div
+        class="card dialog-card"
+        *ngFor="let history of motosState.historyService"
+      >
+        <div class="history-service-container">
+          <span>C° de la moto: {{ history.ItemCode }}</span>
+          <span>Descripción: {{ history.ItemDescription }} </span>
+          <span>Chasis: {{ history.U_Chasis }} </span>
+          <span>Motor: {{ history.U_Motor }} </span>
+          <span *ngIf="history.InternalSerialNum"
+            >Serie: {{ history.InternalSerialNum }}
+          </span>
+        </div>
+        <div class="history-service-container-last">
+          <span
+            >Service ID:
+            <strong class="service-id">{{
+              history.ServiceCallID
+            }}</strong></span
+          >
+          <span
+            >Estado:
+            {{
+              history.Status === -1
+                ? "Cerrado"
+                : history.Status === -3
+                ? "Abierto"
+                : history.Status === -2
+                ? "Pendiente"
+                : "Desestimados"
+            }}</span
+          >
+          <span
+            >Resolución:
+            {{
+              history.Resolution !== null ? history.Resolution : "No cargado"
+            }}
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    mat-dialog
+    *ngIf="
+      motosState.historyService.length <= 0 &&
+      motosState.failMsgHistory !== null
+    "
+  >
+    <div class="dialog-header">
+      <h3>Historial de servicios del cliente</h3>
+      <i
+        class="fa fa-times"
+        role="button"
+        aria-hidden="true"
+        (click)="dismiss()"
+      ></i>
+    </div>
+    <div class="dialog-body">
+      <span>{{ motosState.failMsgHistory }} </span>
+    </div>
+  </div>
+</ng-template>
+
+<!---Modal para crear nuevo servicio-->
+<ng-template #dialogNewService let-modal>
+  <app-loading></app-loading>
+  <app-toasts aria-live="polite" aria-atomic="true"></app-toasts>
+  <div mat-dialog>
+    <div class="dialog-header">
+      <h3 *ngIf="!newServiceForm.value.ServiceCallID">Crear nuevo service</h3>
+      <h3 *ngIf="newServiceForm.value.ServiceCallID">
+        Editar service con el ID:{{ newServiceForm.value.ServiceCallID }}
+      </h3>
+      <i
+        class="fa fa-times"
+        role="button"
+        aria-hidden="true"
+        (click)="dismiss()"
+      ></i>
+    </div>
+    <div class="dialog-body">
+      <div
+        class="change-edit-service"
+        *ngIf="motosState.historyService.length > 0"
+      >
+        <h4>Deseas editar/consultar por un servicio?</h4>
+        <mat-form-field appearance="outline">
+          <mat-label>Service ID | Estado</mat-label>
+          <mat-select (valueChange)="changeFormValues($event)">
+            <mat-option
+              *ngFor="let history of motosState.historyService"
+              [value]="history.ServiceCallID"
+              >{{ history.ServiceCallID }} -
+              {{
+                history.Status === -1
+                  ? "Cerrado"
+                  : history.Status === -3
+                  ? "Abierto"
+                  : history.Status === -2
+                  ? "Pendiente"
+                  : "Desestimados"
+              }}</mat-option
+            >
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <form [formGroup]="newServiceForm">
+        <mat-tab-group>
+          <mat-tab label="Datos Básicos">
+            <h4 class="title-tab">Datos del Cliente:</h4>
+            <div class="tab-container">
+              <mat-form-field appearance="outline">
+                <mat-label>C° Socio de Negocio</mat-label>
+                <input
+                  type="text"
+                  matInput
+                  id="CustomerCode"
+                  formControlName="CustomerCode"
+                  readonly
+                />
+              </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>Nombre del Socio</mat-label>
+                <input
+                  type="text"
+                  matInput
+                  id="CustomerName"
+                  formControlName="CustomerName"
+                  readonly
+                />
+              </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>N° de Telefono</mat-label>
+                <input
+                  type="text"
+                  matInput
+                  id="Telephone"
+                  formControlName="Telephone"
+                />
+                <app-error-message
+                  [field]="$any(newServiceForm.get('Telephone'))"
+                  error="required"
+                  message="Telefono requerido"
+                ></app-error-message>
+              </mat-form-field>
+            </div>
+            <div class="tab-container">
+              <mat-form-field appearance="outline">
+                <mat-label>Destino de factura</mat-label>
+                <input
+                  type="text"
+                  matInput
+                  id="BPBillToAddcress"
+                  formControlName="BPBillToAddress"
+                  readonly
+                />
+                <app-error-message
+                  [field]="$any(newServiceForm.get('BPBillToAddcress'))"
+                  error="required"
+                  message="Dirección de factura requerida"
+                ></app-error-message>
+              </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>Provincia/Ciudad</mat-label>
+                <input type="text" matInput id="City" formControlName="City" />
+                <app-error-message
+                  [field]="$any(newServiceForm.get('City'))"
+                  error="required"
+                  message="Pronvincia/Ciudad requerida"
+                ></app-error-message>
+              </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>Correo Electrónico</mat-label>
+                <input
+                  type="text"
+                  matInput
+                  id="BPeMail"
+                  formControlName="BPeMail"
+                />
+                <app-error-message
+                  [field]="$any(newServiceForm.get('BPeMail'))"
+                  error="required"
+                  message="Email requerido"
+                ></app-error-message>
+              </mat-form-field>
+            </div>
+            <h4 class="title-tab">Datos de la Moto:</h4>
+            <div class="tab-container">
+              <mat-form-field appearance="outline">
+                <mat-label>C° Articulo</mat-label>
+                <input
+                  type="text"
+                  matInput
+                  id="ItemCode"
+                  formControlName="ItemCode"
+                  readonly
+                />
+                <app-error-message
+                  [field]="$any(newServiceForm.get('ItemCode'))"
+                  error="required"
+                  message="C° del articulo requerido"
+                ></app-error-message>
+              </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>Descripción</mat-label>
+                <input
+                  type="text"
+                  matInput
+                  id="ItemDescription"
+                  formControlName="ItemDescription"
+                  readonly
+                />
+                <app-error-message
+                  [field]="$any(newServiceForm.get('ItemDescription'))"
+                  error="required"
+                  message="Descripción del articulo requerida"
+                ></app-error-message>
+              </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>Chasis</mat-label>
+                <input
+                  type="text"
+                  matInput
+                  id="U_Chasis"
+                  formControlName="U_Chasis"
+                />
+                <app-error-message
+                  [field]="$any(newServiceForm.get('U_Chasis'))"
+                  error="required"
+                  message="Chasis requerido"
+                ></app-error-message>
+              </mat-form-field>
+            </div>
+            <div class="tab-container">
+              <mat-form-field appearance="outline">
+                <mat-label>Motor</mat-label>
+                <input
+                  type="text"
+                  matInput
+                  id="U_Motor"
+                  formControlName="U_Motor"
+                />
+                <app-error-message
+                  [field]="$any(newServiceForm.get('U_Motor'))"
+                  error="required"
+                  message="Motor requerido"
+                ></app-error-message>
+              </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>Patente</mat-label>
+                <input
+                  type="text"
+                  matInput
+                  id="U_Patente"
+                  formControlName="U_Patente"
+                  placeholder="Dato opcional"
+                />
+              </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>Serie</mat-label>
+                <input
+                  type="text"
+                  matInput
+                  id="InternalSerialNum"
+                  formControlName="InternalSerialNum"
+                />
+                <app-error-message
+                  [field]="$any(newServiceForm.get('InternalSerialNum'))"
+                  error="required"
+                  message="N° de serie requerido"
+                ></app-error-message>
+              </mat-form-field>
+            </div>
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Kilometros</mat-label>
+              <input
+                type="number"
+                matInput
+                id="U_Kilometraje"
+                formControlName="U_Kilometraje"
+              />
+              <app-error-message
+                [field]="$any(newServiceForm.get('U_Kilometraje'))"
+                error="required"
+                message="Kilometraje requerido"
+              ></app-error-message>
+            </mat-form-field>
+            <ng-container *ngIf="!newServiceForm.value.ServiceCallID">
+              <h4 class="title-tab">Cargar otra moto:</h4>
+              <form
+                class="d-flex input-group"
+                [formGroup]="searchOtherMotorbike"
+              >
+                <mat-form-field appearance="outline">
+                  <mat-label>Marca:</mat-label>
+                  <input
+                    matInput
+                    type="text"
+                    id="brand"
+                    formControlName="brand"
+                  />
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                  <mat-label>Modelo:</mat-label>
+                  <input
+                    matInput
+                    type="text"
+                    id="model"
+                    formControlName="model"
+                  />
+                </mat-form-field>
+                <button
+                  class="btn-other-motorbike"
+                  [disabled]="!searchOtherMotorbike.valid"
+                  (click)="getMotorbikesByBrandAndModel('SEARCH')"
+                >
+                  Buscar
+                </button>
+              </form>
+              <div class="table-new-motorbike">
+                <app-table
+                  [headers]="headerNewMotorbike"
+                  *ngIf="motosState.motorbikeByBrandAndModel.length > 0"
+                >
+                  <tr
+                    class="tr-container"
+                    *ngFor="
+                      let motorbike of motosState.motorbikeByBrandAndModel
+                    "
+                  >
+                    <td class="td-item">
+                      <div class="info-of-item-container">
+                        {{ motorbike.ItemCode }}
+                      </div>
+                    </td>
+                    <td class="td-item">
+                      <div class="info-of-item-container">
+                        {{ motorbike.ItemName }}
+                      </div>
+                    </td>
+                    <td class="td-item">
+                      <div
+                        class="info-of-item-container"
+                        (click)="getMotorbikesByBrandAndModel('ADD', motorbike)"
+                      >
+                        Agregar
+                      </div>
+                    </td>
+                  </tr>
+                </app-table>
+              </div></ng-container
+            >
+          </mat-tab>
+          <mat-tab label="Datos de la Llamada">
+            <div class="tab-container-call pt-4">
+              <mat-form-field appearance="outline">
+                <mat-label>Estado de la Llamada</mat-label>
+                <mat-select id="Status" formControlName="Status">
+                  <mat-option
+                    *ngFor="let status of motosState.statusCall"
+                    [value]="status.value"
+                    >{{ status.name }}
+                  </mat-option>
+                </mat-select>
+                <app-error-message
+                  [field]="$any(newServiceForm.get('Status'))"
+                  error="required"
+                  message="Estado requerido"
+                ></app-error-message>
+              </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>Prioridad</mat-label>
+                <mat-select id="Priority" formControlName="Priority">
+                  <mat-option
+                    *ngFor="let priority of motosState.priority"
+                    [value]="priority.value"
+                    >{{ priority.name }}
+                  </mat-option>
+                </mat-select>
+                <app-error-message
+                  [field]="$any(newServiceForm.get('Priority'))"
+                  error="required"
+                  message="Nivel de prioridad requerido"
+                ></app-error-message>
+              </mat-form-field>
+            </div>
+            <div class="tab-container-call">
+              <mat-form-field appearance="outline">
+                <mat-label>Asunto</mat-label>
+                <input
+                  type="text"
+                  matInput
+                  id="Subject"
+                  formControlName="Subject"
+                />
+                <app-error-message
+                  [field]="$any(newServiceForm.get('Subject'))"
+                  error="required"
+                  message="Asunto requerido"
+                ></app-error-message>
+              </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>Comentario</mat-label>
+                <input
+                  type="text"
+                  matInput
+                  id="Description"
+                  formControlName="Description"
+                />
+                <app-error-message
+                  [field]="$any(newServiceForm.get('Description'))"
+                  error="required"
+                  message="Comentario requerido"
+                ></app-error-message>
+              </mat-form-field>
+            </div>
+            <mat-form-field
+              appearance="outline"
+              class="w-100"
+              *ngIf="
+                newServiceForm.value.ServiceCallID &&
+                newServiceForm.value.Status === -1
+              "
+            >
+              <mat-label>Resolución</mat-label>
+              <input
+                type="text"
+                matInput
+                id="Resolution"
+                formControlName="Resolution"
+              />
+              <app-error-message
+                [field]="$any(newServiceForm.get('Resolution'))"
+                error="required"
+                message="Resolución requerida"
+              ></app-error-message>
+            </mat-form-field>
+            <div class="tab-container">
+              <mat-form-field
+                appearance="outline"
+                *ngIf="motosState.origins.length > 0"
+              >
+                <mat-label>Origen</mat-label>
+                <mat-select id="Origin" formControlName="Origin">
+                  <mat-option
+                    *ngFor="let origin of motosState.origins"
+                    [value]="origin.OriginID"
+                    >{{ origin.Name }}
+                  </mat-option>
+                </mat-select>
+                <app-error-message
+                  [field]="$any(newServiceForm.get('Origin'))"
+                  error="required"
+                  message="Origen requerido"
+                ></app-error-message>
+              </mat-form-field>
+              <mat-form-field
+                appearance="outline"
+                *ngIf="motosState.problemType.length > 0"
+              >
+                <mat-label>Tipo de Problema</mat-label>
+                <mat-select id="ProblemType" formControlName="ProblemType">
+                  <mat-option
+                    *ngFor="let problemType of motosState.problemType"
+                    [value]="problemType.ProblemTypeID"
+                    >{{ problemType.Name }}
+                  </mat-option>
+                </mat-select>
+                <app-error-message
+                  [field]="$any(newServiceForm.get('ProblemType'))"
+                  error="required"
+                  message="Tipo de problema requerido"
+                ></app-error-message>
+              </mat-form-field>
+              <mat-form-field
+                appearance="outline"
+                *ngIf="motosState.subProblemType.length > 0"
+              >
+                <mat-label>Subtipo de Problema</mat-label>
+                <mat-select
+                  id="ProblemSubType"
+                  formControlName="ProblemSubType"
+                >
+                  <mat-option
+                    *ngFor="let subProblemType of motosState.subProblemType"
+                    [value]="subProblemType.ProblemSubTypeID"
+                  >
+                    {{ subProblemType.Name }}
+                  </mat-option>
+                </mat-select>
+                <app-error-message
+                  [field]="$any(newServiceForm.get('ProblemType'))"
+                  error="required"
+                  message="Subtipo de problema requerido"
+                ></app-error-message>
+              </mat-form-field>
+            </div>
+            <div class="tab-container">
+              <mat-form-field
+                appearance="outline"
+                *ngIf="motosState.callTypes.length > 0"
+              >
+                <mat-label>Tipo de Llamada</mat-label>
+                <mat-select id="CallType" formControlName="CallType">
+                  <mat-option
+                    *ngFor="let callType of motosState.callTypes"
+                    [value]="callType.CallTypeID"
+                  >
+                    {{ callType.Name }}
+                  </mat-option>
+                </mat-select>
+                <app-error-message
+                  [field]="$any(newServiceForm.get('CallType'))"
+                  error="required"
+                  message="Tipo de llamada requerida"
+                ></app-error-message>
+              </mat-form-field>
+              <mat-form-field
+                appearance="outline"
+                *ngIf="motosState.employees.length > 0"
+              >
+                <mat-label>Técnico</mat-label>
+                <mat-select
+                  id="TechnicianCode"
+                  formControlName="TechnicianCode"
+                >
+                  <mat-option
+                    *ngFor="let employee of motosState.employees"
+                    [value]="employee.EmployeeID"
+                  >
+                    {{ employee.FirstName }} {{ employee.LastName }}
+                  </mat-option>
+                </mat-select>
+                <app-error-message
+                  [field]="$any(newServiceForm.get('TechnicianCode'))"
+                  error="required"
+                  message="Técnico requerido"
+                ></app-error-message>
+              </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>Alarma</mat-label>
+                <mat-select id="U_Alarma" formControlName="U_Alarma">
+                  <mat-option *ngFor="let opt of options" value="{{ opt }}"
+                    >{{ opt }}
+                  </mat-option>
+                </mat-select>
+                <app-error-message
+                  [field]="$any(newServiceForm.get('U_Alarma'))"
+                  error="required"
+                  message="Posesión de alarma requerida"
+                ></app-error-message>
+              </mat-form-field>
+            </div>
+            <div class="tab-container">
+              <mat-form-field appearance="outline">
+                <mat-label>Casco</mat-label>
+                <mat-select id="U_Casco" formControlName="U_Casco">
+                  <mat-option *ngFor="let opt of options" value="{{ opt }}"
+                    >{{ opt }}
+                  </mat-option>
+                </mat-select>
+                <app-error-message
+                  [field]="$any(newServiceForm.get('U_Casco'))"
+                  error="required"
+                  message="Posesión de casco requerida"
+                ></app-error-message>
+              </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>Kit de Herramientas</mat-label>
+                <mat-select
+                  id="U_Kit_Herramientas"
+                  formControlName="U_Kit_Herramientas"
+                >
+                  <mat-option *ngFor="let opt of options" value="{{ opt }}"
+                    >{{ opt }}
+                  </mat-option>
+                </mat-select>
+                <app-error-message
+                  [field]="$any(newServiceForm.get('U_Kit_Herramientas'))"
+                  error="required"
+                  message="Posesión de kit de herramientas requerido"
+                ></app-error-message>
+              </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>Faltante</mat-label>
+                <mat-select id="U_Faltante" formControlName="U_Faltante">
+                  <mat-option *ngFor="let opt of options" value="{{ opt }}"
+                    >{{ opt }}
+                  </mat-option>
+                </mat-select>
+                <app-error-message
+                  [field]="$any(newServiceForm.get('U_Faltante'))"
+                  error="required"
+                  message="Parte faltante requerida"
+                ></app-error-message>
+              </mat-form-field>
+            </div>
+            <div class="tab-container">
+              <mat-form-field appearance="outline">
+                <mat-label>Rayado</mat-label>
+                <mat-select id="U_Rayado" formControlName="U_Rayado">
+                  <mat-option *ngFor="let opt of options" value="{{ opt }}"
+                    >{{ opt }}
+                  </mat-option>
+                </mat-select>
+                <app-error-message
+                  [field]="$any(newServiceForm.get('U_Rayado'))"
+                  error="required"
+                  message="Posesión de rayadura requerida"
+                ></app-error-message>
+              </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>Rotura</mat-label>
+                <mat-select id="U_Rotura" formControlName="U_Rotura">
+                  <mat-option *ngFor="let opt of options" value="{{ opt }}"
+                    >{{ opt }}
+                  </mat-option>
+                </mat-select>
+                <app-error-message
+                  [field]="$any(newServiceForm.get('U_Rotura'))"
+                  error="required"
+                  message="Posesión de rotura requerida"
+                ></app-error-message>
+              </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>Manchado</mat-label>
+                <mat-select id="U_Manchado" formControlName="U_Manchado">
+                  <mat-option *ngFor="let opt of options" value="{{ opt }}"
+                    >{{ opt }}
+                  </mat-option>
+                </mat-select>
+                <app-error-message
+                  [field]="$any(newServiceForm.get('U_Manchado'))"
+                  error="required"
+                  message="Posesión de manchadura requerida"
+                ></app-error-message>
+              </mat-form-field>
+            </div>
+          </mat-tab>
+          <mat-tab label="Operaciones">
+            <ng-container *ngIf="motosState.itemsExistInService.length > 0">
+              <h4 class="title-tab">
+                Articulos Seleccionados para la Realización del Service:
+              </h4>
+              <app-table [headers]="headerItemExist">
+                <tr
+                  class="tr-container"
+                  *ngFor="let item of motosState.itemsExistInService"
+                >
+                  <td class="td-item">
+                    <div class="info-of-item-container">
+                      {{ item.ItemCode }}
+                    </div>
+                  </td>
+                  <td class="td-item">
+                    <div class="info-of-item-container">
+                      {{ item.ItemDescription }}
+                    </div>
+                  </td>
+                  <td class="td-item">
+                    <div class="info-of-item-container">
+                      {{ item.MeasureUnit }}
+                    </div>
+                  </td>
+                  <td class="td-item">
+                    <div class="info-of-item-container">
+                      {{ item.Quantity }}
+                    </div>
+                  </td>
+                </tr>
+              </app-table>
+            </ng-container>
+            <ng-container *ngIf="!motosState.itemsExistInService.length">
+              <h4 class="title-tab">Inventario:</h4>
+              <form
+                class="tab-container-operations input-group"
+                [formGroup]="searchInOperationForm"
+              >
+                <mat-form-field appearance="outline">
+                  <mat-label>Buscar por:</mat-label>
+                  <mat-select id="searchType" formControlName="searchType">
+                    <mat-option value="Descripción">Descripción</mat-option>
+                    <mat-option value="Código">Código</mat-option>
+                  </mat-select>
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                  <mat-label>Ingresar aquí:</mat-label>
+                  <input
+                    matInput
+                    type="text"
+                    id="item"
+                    formControlName="item"
+                  />
+                </mat-form-field>
+                <button
+                  class="btn-other-motorbike"
+                  [disabled]="!searchInOperationForm.valid"
+                  (click)="getItemsFromOperation()"
+                >
+                  Buscar
+                </button>
+              </form>
+              <div class="table-operation">
+                <app-table
+                  [headers]="headerOperation"
+                  *ngIf="motosState.itemsFromOperations.length > 0"
+                >
+                  <tr
+                    class="tr-container"
+                    *ngFor="let item of motosState.itemsFromOperations"
+                  >
+                    <td class="td-item">
+                      <div class="info-of-item-container">
+                        {{ item.ItemCode }} - {{ item.ItemName }} |
+                        {{ item.SalesUnit }}
+                      </div>
+                    </td>
+                    <td class="td-item">
+                      <div
+                        class="info-of-item-container"
+                        (click)="consultStockAndAddItem(item)"
+                      >
+                        Agregar
+                      </div>
+                    </td>
+                  </tr>
+                </app-table>
+              </div>
+              <div class="table-operation pt-3">
+                <app-table
+                  [headers]="headerItemsSelected"
+                  *ngIf="sales.DocumentLines.length > 0"
+                >
+                  <tr
+                    class="tr-container"
+                    *ngFor="let item of sales.DocumentLines"
+                  >
+                    <td class="td-item">
+                      <div class="info-of-item-container">
+                        {{ item.ItemCode }} - {{ item.ItemName }} |
+                        {{ item.MeasureUnit }}
+                      </div>
+                    </td>
+                    <td class="td-item">
+                      <div class="info-of-item-container">
+                        <div class="container-quantity">
+                          <mat-form-field appearance="outline">
+                            <mat-label></mat-label>
+                            <input
+                              matInput
+                              value="{{ item.Quantity }}"
+                              (change)="
+                                changeValueQuantityFromItemInSale(
+                                  item.ItemCode,
+                                  $event
+                                )
+                              "
+                            />
+                          </mat-form-field>
+                        </div>
+                      </div>
+                    </td>
+                    <td class="td-item">
+                      <div
+                        class="info-of-item-container"
+                        (click)="removeFromSale(item.ItemCode)"
+                      >
+                        Quitar
+                      </div>
+                    </td>
+                  </tr>
+                </app-table>
+              </div></ng-container
+            >
+          </mat-tab>
+        </mat-tab-group>
+      </form>
+      <mat-dialog-actions align="end">
+        <button mat-button (click)="dismiss()">Cancelar</button>
+        <button
+          mat-button
+          [disabled]="!newServiceForm.valid"
+          (click)="createOrEditService()"
+        >
+          {{
+            newServiceForm.value.ServiceCallID
+              ? "Editar service"
+              : "Crear service"
+          }}
+        </button>
+      </mat-dialog-actions>
+    </div>
+  </div>
+</ng-template>

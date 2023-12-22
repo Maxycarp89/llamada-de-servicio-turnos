@@ -1,0 +1,13 @@
+@import "../../../yuhmak.scss";
+
+.title-customer {
+  @include flex-row-start-center;
+  i {
+    margin-left: 20px;
+    font-size: 28px;
+    font-weight: bold;
+    &:hover {
+        color: var(--paradigm-error)
+    }
+  }
+}

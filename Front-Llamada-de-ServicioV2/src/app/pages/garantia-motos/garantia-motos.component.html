@@ -1,0 +1,750 @@
+<h2 class="title-motos">Ingresar el tipo de busqueda y lo que desee buscar:</h2>
+<form class="input-group searchbar-container" [formGroup]="searchForm">
+  <div class="input-field">
+    <i class="fa-solid fa-filter"></i>
+    <select id="type" formControlName="type" placeholder="Status">
+      <option value="Client">C° Cliente</option>
+      <option value="DNI">DNI</option>
+      <option value="ClientName">Nombre del cliente</option>
+      <option value="Chasis">Chasis</option>
+      <option value="Motor">Motor</option>
+      <option value="Serie">Serie</option>
+    </select>
+  </div>
+  <div class="input-field">
+    <i class="fas fa-search"></i>
+    <input id="search" formControlName="search" placeholder="Search" />
+  </div>
+  <button
+    class="btn solid"
+    (click)="searchCustomerMotorbike()"
+    [disabled]="!searchForm.valid"
+  >
+    Buscar
+  </button>
+</form>
+<div
+  class="card page-card-motos"
+  *ngIf="!garantiaState.motos.length && garantiaState.error !== null"
+>
+  <span>{{ garantiaState.error }}</span>
+</div>
+<div
+  class="card page-card-motos"
+  *ngIf="garantiaState.motos.length > 0 && garantiaState.error === null"
+>
+  <div class="client-motorbike-info" *ngIf="!searchByName">
+    <span>Nombre del Cliente: {{ garantiaState.motos[0].CardName }} </span
+    ><br />
+    <span>C° del Cliente: {{ garantiaState.motos[0].CardCode }}</span
+    ><br />
+    <span *ngIf="garantiaState.motos[0].DocEntry"
+      >Moto comprada en Yuhmak.</span
+    >
+    <span *ngIf="!garantiaState.motos[0].DocEntry"
+      >Moto perteneciente a Yuhmak.</span
+    >
+  </div>
+  <app-table [headers]="headers" *ngIf="garantiaState.motos[0].DocEntry">
+    <tr
+      class="tr-container"
+      *ngFor="let customerMotorbike of garantiaState.motos"
+    >
+      <td class="td-item">
+        <div class="info-of-item-container">
+          {{ customerMotorbike.DocEntry }}
+        </div>
+      </td>
+      <td class="td-item" *ngIf="searchByName">
+        <div class="info-of-item-container">
+          {{ customerMotorbike.CardCode }}
+        </div>
+      </td>
+      <td class="td-item" *ngIf="searchByName">
+        <div class="info-of-item-container">
+          {{ customerMotorbike.CardName }}
+        </div>
+      </td>
+      <td class="td-item">
+        <div class="info-of-item-container">
+          {{ customerMotorbike.Dscription }}
+        </div>
+      </td>
+      <td class="td-item">
+        <div class="info-of-item-container">
+          {{
+            customerMotorbike.Color !== null
+              ? customerMotorbike.Color
+              : "No posee"
+          }}
+        </div>
+      </td>
+      <td class="td-item">
+        <div class="info-of-item-container">
+          {{
+            customerMotorbike.U_Chasis !== null
+              ? customerMotorbike.U_Chasis
+              : "No posee"
+          }}
+        </div>
+      </td>
+      <td class="td-item">
+        <div class="info-of-item-container">
+          {{
+            customerMotorbike.U_Motor !== null
+              ? customerMotorbike.U_Motor
+              : "No posee"
+          }}
+        </div>
+      </td>
+      <td class="td-item">
+        <div class="info-of-item-container">
+          {{
+            customerMotorbike.IntrSerial !== null
+              ? customerMotorbike.IntrSerial
+              : "No posee"
+          }}
+        </div>
+      </td>
+      <td class="td-item">
+        <div class="info-of-item-container actions-container">
+          <i
+            class="fa-solid fa-pen-to-square edit-action"
+            (click)="openDialogService(customerMotorbike, dialogNewService)"
+            ngbTooltip="Crear / Editar Service"
+          ></i>
+        </div>
+      </td>
+    </tr>
+  </app-table>
+  <app-table
+    [headers]="['C° de la Moto', 'Moto', 'Chasis', 'Motor', 'Serie', 'Acción']"
+    *ngIf="!garantiaState.motos[0].DocEntry"
+  >
+    <tr
+      class="tr-container"
+      *ngFor="let customerMotorbike of garantiaState.motos"
+    >
+      <td class="td-item">
+        <div class="info-of-item-container">
+          {{ customerMotorbike.ItemCode }}
+        </div>
+      </td>
+      <td class="td-item">
+        <div class="info-of-item-container">
+          {{ customerMotorbike.Dscription }}
+        </div>
+      </td>
+      <td class="td-item">
+        <div class="info-of-item-container">
+          {{ customerMotorbike.U_Chasis }}
+        </div>
+      </td>
+      <td class="td-item">
+        <div class="info-of-item-container">
+          {{ customerMotorbike.U_Motor }}
+        </div>
+      </td>
+      <td class="td-item">
+        <div class="info-of-item-container">
+          {{
+            customerMotorbike.IntrSerial !== null
+              ? customerMotorbike.IntrSerial
+              : "No posee"
+          }}
+        </div>
+      </td>
+      <td class="td-item">
+        <div class="info-of-item-container actions-container">
+          <i
+            class="fa-solid fa-pen-to-square edit-action"
+            (click)="openDialogService(customerMotorbike, dialogNewService)"
+            ngbTooltip="Crear / Editar Service"
+          ></i>
+        </div>
+      </td>
+    </tr>
+  </app-table>
+</div>
+
+<ng-template #dialogNewService let-modal>
+  <app-loading></app-loading>
+  <app-toasts aria-live="polite" aria-atomic="true"></app-toasts>
+
+  <div class="pt-4 px-3">
+    <div>
+      <h4 *ngIf="!serviceForm.value.ServiceCallID">Crear nuevo service</h4>
+      <h4 *ngIf="serviceForm.value.ServiceCallID">
+        Editar service con el ID:{{ serviceForm.value.ServiceCallID }}
+      </h4>
+    </div>
+
+    <div class="pt-2 px-3">
+      <ul class="nav nav-tabs" id="service" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link active"
+            id="basicdata-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#basicdata"
+            type="button"
+            role="tab"
+            aria-controls="basicdata"
+            aria-selected="true"
+          >
+            Datos Básicos
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link"
+            id="calltypedata-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#calltypedata"
+            type="button"
+            role="tab"
+            aria-controls="calltypedata"
+            aria-selected="false"
+          >
+            Datos de la Llamada
+          </button>
+        </li>
+      </ul>
+    </div>
+
+    <div class="tab-content p-4" id="serviceContent">
+      <div
+        class="tab-pane fade show active"
+        id="basicdata"
+        role="tabpanel"
+        aria-labelledby="basicdata-tab"
+      >
+        <form [formGroup]="serviceForm">
+          <div class="row p-1 px-2">
+            <div class="col-4">
+              <div class="form-group">
+                <label class="pb-1">C° Socio de Negocio - Dato requerido</label>
+                <input
+                  formControlName="CustomerCode"
+                  readonly
+                  class="form-control p-2"
+                />
+              </div>
+            </div>
+            <div class="col-4">
+              <div class="form-group">
+                <label class="pb-1">Nombre del Socio - Dato requerido</label>
+                <input
+                  readonly
+                  formControlName="CustomerName"
+                  class="form-control p-2"
+                />
+              </div>
+            </div>
+            <div class="col-4">
+              <div class="form-group">
+                <label class="pb-1">N° de Telefono - Dato no requerido</label>
+                <input formControlName="Telephone" class="form-control p-2" />
+              </div>
+            </div>
+          </div>
+
+          <div class="row p-1 px-2">
+            <div class="col-4">
+              <div class="form-group">
+                <label class="pb-1">Destino de factura - Dato requerido</label>
+                <input
+                  formControlName="BPBillToAddress"
+                  class="form-control p-2"
+                />
+                <app-error-message
+                  [field]="$any(serviceForm.get('BPBillToAddcress'))"
+                  error="required"
+                  message="Dirección de factura requerida"
+                ></app-error-message>
+              </div>
+            </div>
+            <div class="col-4">
+              <div class="form-group">
+                <label class="pb-1">Provincia/Ciudad - Dato no requerido</label>
+                <input
+                  readonly
+                  formControlName="City"
+                  class="form-control p-2"
+                />
+              </div>
+            </div>
+            <div class="col-4">
+              <div class="form-group">
+                <label class="pb-1">Correo Electrónico - Dato requerido</label>
+                <input formControlName="BPeMail" class="form-control p-2" />
+                <app-error-message
+                  [field]="$any(serviceForm.get('BPeMail'))"
+                  error="required"
+                  message="Email requerido"
+                ></app-error-message>
+              </div>
+            </div>
+          </div>
+
+          <div class="row p-1 px-2">
+            <div class="col-4">
+              <div class="form-group">
+                <label class="pb-1">C° Articulo - Dato requerido</label>
+                <input
+                  formControlName="ItemCode"
+                  readonly
+                  class="form-control p-2"
+                />
+                <app-error-message
+                  [field]="$any(serviceForm.get('ItemCode'))"
+                  error="required"
+                  message="C° del articulo requerido"
+                ></app-error-message>
+              </div>
+            </div>
+            <div class="col-4">
+              <div class="form-group">
+                <label class="pb-1">Descripción - Dato requerido</label>
+                <input
+                  formControlName="ItemDescription"
+                  readonly
+                  class="form-control p-2"
+                />
+                <app-error-message
+                  [field]="$any(serviceForm.get('ItemDescription'))"
+                  error="required"
+                  message="Descripción del articulo requerida"
+                ></app-error-message>
+              </div>
+            </div>
+            <div class="col-4">
+              <div class="form-group">
+                <label class="pb-1">Chasis - Dato requerido</label>
+                <input
+                  formControlName="U_Chasis"
+                  appUpperCase
+                  class="form-control p-2"
+                />
+                <app-error-message
+                  [field]="$any(serviceForm.get('U_Chasis'))"
+                  error="required"
+                  message="Chasis requerido"
+                ></app-error-message>
+              </div>
+            </div>
+          </div>
+
+          <div class="row p-1 px-2">
+            <div class="col-4">
+              <div class="form-group">
+                <label class="pb-1">Motor - Dato requerido</label>
+                <input
+                  formControlName="U_Motor"
+                  appUpperCase
+                  class="form-control p-2"
+                />
+                <app-error-message
+                  [field]="$any(serviceForm.get('U_Motor'))"
+                  error="required"
+                  message="Motor requerido"
+                ></app-error-message>
+              </div>
+            </div>
+            <div class="col-4">
+              <div class="form-group">
+                <label class="pb-1">Serie</label>
+                <input
+                  formControlName="InternalSerialNum"
+                  appUpperCase
+                  readonly
+                  class="form-control p-2"
+                />
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <div
+        class="tab-pane fade"
+        id="calltypedata"
+        role="tabpanel"
+        aria-labelledby="calltypedata-tab"
+      >
+        <form [formGroup]="serviceForm">
+          <div class="row p-1 px-2">
+            <div class="col-4">
+              <div class="form-group">
+                <label class="pb-1"
+                  >Estado de la Llamada - Dato requerido</label
+                >
+                <select
+                  class="form-control p-2"
+                  formControlName="Status"
+                  addParsedValue
+                >
+                  <option
+                    *ngFor="let status of coreState.statusCall"
+                    [value]="status.value"
+                  >
+                    {{ status.name }}
+                  </option>
+                </select>
+                <app-error-message
+                  [field]="$any(serviceForm.get('Status'))"
+                  error="required"
+                  message="Estado requerido"
+                ></app-error-message>
+              </div>
+            </div>
+
+            <div class="col-4">
+              <div class="form-group">
+                <label class="pb-1">Prioridad - Dato requerido</label>
+                <select
+                  class="form-control p-2"
+                  formControlName="Priority"
+                  addParsedValue
+                >
+                  <option
+                    *ngFor="let priority of coreState.priority"
+                    [value]="priority.value"
+                  >
+                    {{ priority.name }}
+                  </option>
+                </select>
+                <app-error-message
+                  [field]="$any(serviceForm.get('Priority'))"
+                  error="required"
+                  message="Nivel de prioridad requerido"
+                ></app-error-message>
+              </div>
+            </div>
+
+            <div class="col-4">
+              <div class="form-group">
+                <label class="pb-1">Kilometros - Dato requerido</label>
+                <input
+                  type="number"
+                  formControlName="U_Kilometraje"
+                  class="form-control p-2"
+                />
+                <app-error-message
+                  [field]="$any(serviceForm.get('U_Kilometraje'))"
+                  error="required"
+                  message="Kilometraje requerido"
+                ></app-error-message>
+              </div>
+            </div>
+          </div>
+
+          <div class="row p-1 px-2">
+            <div class="col-6">
+              <div class="form-group">
+                <label class="pb-1">Asunto - Dato requerido</label>
+                <input formControlName="Subject" class="form-control p-2" />
+                <app-error-message
+                  [field]="$any(serviceForm.get('Subject'))"
+                  error="required"
+                  message="Asunto requerido"
+                ></app-error-message>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="form-group">
+                <label class="pb-1">Detalle - Dato requerido</label>
+                <input formControlName="Description" class="form-control p-2" />
+                <app-error-message
+                  [field]="$any(serviceForm.get('Description'))"
+                  error="required"
+                  message="Comentario requerido"
+                ></app-error-message>
+              </div>
+            </div>
+          </div>
+
+          <div class="row p-1 px-2">
+            <div class="col-4" *ngIf="coreState.origins.length > 0">
+              <div class="form-group">
+                <label class="pb-1">Origen - Dato requerido</label>
+                <select
+                  class="form-control p-2"
+                  formControlName="Origin"
+                  addParsedValue
+                >
+                  <option
+                    *ngFor="let origin of coreState.origins"
+                    [value]="origin.OriginID"
+                  >
+                    {{ origin.Name }}
+                  </option>
+                </select>
+                <app-error-message
+                  [field]="$any(serviceForm.get('Origin'))"
+                  error="required"
+                  message="Origen requerido"
+                ></app-error-message>
+              </div>
+            </div>
+            <div class="col-4" *ngIf="coreState.problemType.length > 0">
+              <div class="form-group">
+                <label class="pb-1">Tipo de Problema - Dato requerido</label>
+                <select
+                  formControlName="ProblemType"
+                  (ngModelChange)="clearSubProblemType()"
+                  class="form-control p-2"
+                  addParsedValue
+                >
+                  <option hidden></option>
+                  <option
+                    *ngFor="let problemType of coreState.problemType"
+                    [value]="problemType.ProblemTypeID"
+                  >
+                    {{ problemType.Name }}
+                  </option>
+                </select>
+                <app-error-message
+                  [field]="$any(serviceForm.get('ProblemType'))"
+                  error="required"
+                  message="Tipo de problema requerido"
+                ></app-error-message>
+              </div>
+            </div>
+            <div class="col-4" *ngIf="coreState.subProblemType.length > 0">
+              <div class="form-group">
+                <label class="pb-1">Subtipo de Problema - Dato requerido</label>
+                <select
+                  formControlName="ProblemSubType"
+                  class="form-control p-2"
+                  addParsedValue
+                >
+                  <option hidden></option>
+                  <option
+                    *ngFor="
+                      let subProblemFilter of coreState.subProblemType
+                        | subProblemFilter
+                          : serviceForm.value.ProblemType
+                          : coreState.problemType
+                    "
+                    [value]="subProblemFilter.ProblemSubTypeID"
+                  >
+                    {{ subProblemFilter.Name }}
+                  </option>
+                </select>
+                <app-error-message
+                  [field]="$any(serviceForm.get('ProblemSubType'))"
+                  error="required"
+                  message="Subtipo de problema requerido"
+                ></app-error-message>
+              </div>
+            </div>
+          </div>
+
+          <div class="row p-1 px-2">
+            <div class="col-4" *ngIf="coreState.callTypes.length > 0">
+              <div class="form-group">
+                <label class="pb-1">Tipo de Llamada - Dato requerido</label>
+                <select
+                  class="form-control p-2"
+                  formControlName="CallType"
+                  addParsedValue
+                >
+                  <option
+                    *ngFor="let callType of coreState.callTypes"
+                    [value]="callType.CallTypeID"
+                  >
+                    {{ callType.Name }}
+                  </option>
+                </select>
+                <app-error-message
+                  [field]="$any(serviceForm.get('CallType'))"
+                  error="required"
+                  message="Tipo de llamada requerida"
+                ></app-error-message>
+              </div>
+            </div>
+            <div class="col-4" *ngIf="coreState.employees.length > 0">
+              <div class="form-group">
+                <label class="pb-1">Técnico - Dato requerido</label>
+                <select
+                  formControlName="TechnicianCode"
+                  class="form-control p-2 selectpicker"
+                  addParsedValue
+                >
+                  <option
+                    *ngFor="let employee of coreState.employees"
+                    [value]="employee.EmployeeID"
+                  >
+                    {{ employee.FirstName }} {{ employee.LastName }}
+                  </option>
+                </select>
+                <app-error-message
+                  [field]="$any(serviceForm.get('TechnicianCode'))"
+                  error="required"
+                  message="Técnico requerido"
+                ></app-error-message>
+              </div>
+            </div>
+            <div class="col-4">
+              <div class="form-group">
+                <label class="pb-1">Alarma - Dato requerido</label>
+                <select formControlName="U_Alarma" class="form-control p-2">
+                  <option *ngFor="let opt of coreState.options" [value]="opt">
+                    {{ opt }}
+                  </option>
+                </select>
+                <app-error-message
+                  [field]="$any(serviceForm.get('U_Alarma'))"
+                  error="required"
+                  message="Posesión de alarma requerida"
+                ></app-error-message>
+              </div>
+            </div>
+          </div>
+
+          <div class="row p-1 px-2">
+            <div class="col-4">
+              <div class="form-group">
+                <label class="pb-1">Casco - Dato requerido</label>
+                <select class="form-control p-2" formControlName="U_Casco">
+                  <option *ngFor="let opt of coreState.options" [value]="opt">
+                    {{ opt }}
+                  </option>
+                </select>
+                <app-error-message
+                  [field]="$any(serviceForm.get('U_Casco'))"
+                  error="required"
+                  message="Posesión de casco requerida"
+                ></app-error-message>
+              </div>
+            </div>
+            <div class="col-4">
+              <div class="form-group">
+                <label class="pb-1">Kit de Herramientas - Dato requerido</label>
+                <select
+                  formControlName="U_Kit_Herramientas"
+                  class="form-control p-2"
+                >
+                  <option *ngFor="let opt of coreState.options" [value]="opt">
+                    {{ opt }}
+                  </option>
+                </select>
+                <app-error-message
+                  [field]="$any(serviceForm.get('U_Kit_Herramientas'))"
+                  error="required"
+                  message="Posesión de kit de herramientas requerido"
+                ></app-error-message>
+              </div>
+            </div>
+            <div class="col-4">
+              <div class="form-group">
+                <label class="pb-1">Faltante - Dato requerido</label>
+                <select formControlName="U_Faltante" class="form-control p-2">
+                  <option *ngFor="let opt of coreState.options" [value]="opt">
+                    {{ opt }}
+                  </option>
+                </select>
+                <app-error-message
+                  [field]="$any(serviceForm.get('U_Faltante'))"
+                  error="required"
+                  message="Parte faltante requerida"
+                ></app-error-message>
+              </div>
+            </div>
+          </div>
+
+          <div class="row p-1 px-2">
+            <div class="col-4">
+              <div class="form-group">
+                <label class="pb-1">Rayado - Dato requerido</label>
+                <select class="form-control p-2" formControlName="U_Rayado">
+                  <option *ngFor="let opt of coreState.options" [value]="opt">
+                    {{ opt }}
+                  </option>
+                </select>
+                <app-error-message
+                  [field]="$any(serviceForm.get('U_Rayado'))"
+                  error="required"
+                  message="Posesión de rayadura requerida"
+                ></app-error-message>
+              </div>
+            </div>
+            <div class="col-4">
+              <div class="form-group">
+                <label class="pb-1">Rotura - Dato requerido</label>
+                <select formControlName="U_Rotura" class="form-control p-2">
+                  <option *ngFor="let opt of coreState.options" [value]="opt">
+                    {{ opt }}
+                  </option>
+                </select>
+                <app-error-message
+                  [field]="$any(serviceForm.get('U_Rotura'))"
+                  error="required"
+                  message="Posesión de rotura requerida"
+                ></app-error-message>
+              </div>
+            </div>
+            <div class="col-4">
+              <div class="form-group">
+                <label class="pb-1">Manchado - Dato requerido</label>
+                <select formControlName="U_Manchado" class="form-control p-2">
+                  <option *ngFor="let opt of coreState.options" [value]="opt">
+                    {{ opt }}
+                  </option>
+                </select>
+                <app-error-message
+                  [field]="$any(serviceForm.get('U_Manchado'))"
+                  error="required"
+                  message="Posesión de manchadura requerida"
+                ></app-error-message>
+              </div>
+            </div>
+          </div>
+
+          <div class="row p-1 px-2">
+            <div class="col-12">
+              <div class="form-group">
+                <label class="pb-1">Nivel Combustible - Dato requerido</label>
+                <select
+                  formControlName="U_Nivel_Combustible"
+                  class="form-control p-2"
+                >
+                  <option
+                    *ngFor="let opt of coreState.combustibleOption"
+                    [value]="opt.value"
+                  >
+                    {{ opt.name }}
+                  </option>
+                </select>
+                <app-error-message
+                  [field]="$any(serviceForm.get('U_Nivel_Combustible'))"
+                  error="required"
+                  message="Nivel de combustible requerido"
+                ></app-error-message>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="pb-4 px-4 d-flex justify-content-end align-items-center">
+      <button
+        type="button"
+        class="btn-paradigm-secondary m-1"
+        (click)="dismiss()"
+      >
+        Cancelar
+      </button>
+      <button
+        type="button"
+        class="btn-paradigm m-1"
+        *ngIf="!!serviceForm.value.ClosingDate === false"
+        (click)="createWarrantyService()"
+      >
+        Guardar
+      </button>
+    </div>
+  </div>
+</ng-template>

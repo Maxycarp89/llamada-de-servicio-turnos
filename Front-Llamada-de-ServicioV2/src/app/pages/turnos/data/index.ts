@@ -1,0 +1,1 @@
+export const headers: string[] = ["ID Turno","Fecha","Cliente","Patente","Chasis","Acción"]

@@ -1,0 +1,31 @@
+<div *ngIf="!loaded" class="card widget widget-loading">
+    <div class="widget-header">
+        <h4 class="placeholder-glow">
+            <span class="placeholder col-5 placeholder-sm bg-secondary"></span>
+        </h4>
+        <h6 class="placeholder-glow">
+            <span class="placeholder col-3 placeholder-xs bg-secondary"></span>
+        </h6>
+        <div class="text-center">
+            <div class="spinner-border text-secondary" role="status">
+            </div>
+        </div>
+    </div>
+    <div class="widget-body">
+        <div class="line-widget-container-w">
+            <canvas [id]=""></canvas>
+        </div>
+    </div>
+</div>
+
+<div *ngIf="loaded" class="card" [ngClass]="widgetData.cardClass">
+    <div class="widget-header">
+        <h4>{{ widgetData.title }}</h4>
+        <h6>{{ widgetData.subtitle }}</h6>
+    </div>
+    <div class="widget-body">
+        <div class="line-widget-container-w">
+            <canvas [id]="widgetData.canvasId"></canvas>
+        </div>
+    </div>
+</div>

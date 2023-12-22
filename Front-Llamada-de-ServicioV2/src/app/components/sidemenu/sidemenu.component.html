@@ -1,0 +1,110 @@
+<div class="sidemenu" [ngClass]="collapsed ? 'sidemenu-collapsed' : ''">
+  <div class="logo-container">
+    <button class="logo" (click)="toggleCollapse()">Y</button>
+    <div class="logo-text" *ngIf="collapsed">Service Yuhmak</div>
+    <button class="btn-collapse" *ngIf="collapsed" (click)="closeSideMenu()">
+      <i class="fas fa-chevron-left"></i>
+    </button>
+  </div>
+
+  <ul class="sidemenu-nav">
+    <ng-container *ngFor="let section of navData">
+      <li class="sidemenu-nav-item" *ngIf="showByRol(section.show) === true">
+        <a
+          class="sidemenu-nav-link"
+          (click)="toggleSection(section)"
+          *ngIf="section.subsections; else regularLink"
+        >
+          <i class="sidemenu-nav-icon" [class]="section.icon"></i>
+          <span class="sidemenu-nav-text" *ngIf="collapsed">{{
+            section.label
+          }}</span>
+          <i
+            class="sidemenu-nav-expand-icon fas"
+            *ngIf="collapsed"
+            [ngClass]="
+              expandedSections[section.label]
+                ? 'fa-chevron-up'
+                : 'fa-chevron-down'
+            "
+          ></i>
+        </a>
+        <ng-template #regularLink>
+          <a
+            class="sidemenu-nav-link"
+            [routerLink]="[section.routelink]"
+            routerLinkActive="active-link"
+            [routerLinkActiveOptions]="{ exact: true }"
+          >
+            <i class="sidemenu-nav-icon" [class]="section.icon"></i>
+            <span class="sidemenu-nav-text" *ngIf="collapsed">{{
+              section.label
+            }}</span>
+          </a>
+        </ng-template>
+        <ul
+          class="sidemenu-nav"
+          *ngIf="section.subsections && expandedSections[section.label]"
+        >
+          <ng-container *ngFor="let subsection of section.subsections">
+            <li
+              class="sidemenu-nav-item"
+              *ngIf="showByRol(subsection.show) === true"
+            >
+              <a
+                class="sidemenu-nav-link"
+                [routerLink]="[subsection.routelink]"
+                routerLinkActive="active-link"
+                [routerLinkActiveOptions]="{ exact: true }"
+              >
+                <i class="sidemenu-nav-icon" [class]="subsection.icon"></i>
+                <span class="sidemenu-nav-text" *ngIf="collapsed">{{
+                  subsection.label
+                }}</span>
+              </a>
+            </li>
+          </ng-container>
+        </ul>
+      </li></ng-container
+    >
+  </ul>
+
+  <ul class="sidemenu-bottom">
+    <li class="sidemenu-bottom-item">
+      <!-- User -->
+      <span class="sidemenu-bottom-text" *ngIf="collapsed"
+        >{{ activeOffice.BPLName }} - {{ activeOffice.AliasName }}
+        <i
+          class="fas fa-edit"
+          (click)="toggleChangeOffice(chooseNewOffice)"
+        ></i>
+      </span>
+    </li>
+    <div class="bottom-divider"></div>
+    <li class="sidemenu-bottom-item">
+      <!-- Logout button -->
+      <a class="sidemenu-bottom-link" (click)="logout()">
+        <span *ngIf="collapsed">Logout</span>
+        <i class="fas fa-sign-out-alt"></i>
+      </a>
+    </li>
+  </ul>
+</div>
+
+<ng-template #chooseNewOffice let-modal>
+  <app-loading></app-loading>
+  <app-toasts aria-live="polite" aria-atomic="true"></app-toasts>
+  <div mat-dialog>
+    <h1 mat-dialog-title>Elegir nueva sucursal</h1>
+    <div mat-dialog-content>
+      <mat-select
+        [ngModel]="activeOfficeID"
+        (ngModelChange)="changeNewOffice($event)"
+      >
+        <mat-option *ngFor="let office of offices" [value]="office.BPLId">
+          {{ office.BPLName }} - {{ office.AliasName }}
+        </mat-option>
+      </mat-select>
+    </div>
+  </div>
+</ng-template>

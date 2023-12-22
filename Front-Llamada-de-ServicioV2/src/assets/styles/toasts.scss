@@ -1,0 +1,21 @@
+// TOASTS STYLES //
+
+.success-toast {
+    color: var(--paradigm-text-secondary) !important;
+    background-color: var(--paradigm-success) !important;
+}
+
+.warning-toast {
+    color: var(--paradigm-text) !important;
+    background-color: var(--paradigm-warning) !important;
+}
+
+.error-toast {
+    color: var(--paradigm-text-secondary) !important;
+    background-color: var(--paradigm-error) !important;
+}
+
+.info-toast {
+    color: var(--paradigm-text-secondary) !important;
+    background-color: var(--paradigm-info) !important;
+}

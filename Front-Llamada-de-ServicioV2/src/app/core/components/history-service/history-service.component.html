@@ -1,0 +1,80 @@
+<app-loading></app-loading>
+<app-toasts aria-live="polite" aria-atomic="true"></app-toasts>
+<div class="pt-4 px-3" *ngIf="historyService.length > 0 && msg === null">
+  <div class="title-history">
+    <h4>Historial de servicios del cliente</h4>
+    <i
+      class="fa fa-times"
+      role="button"
+      aria-hidden="true"
+      (click)="dismiss()"
+    ></i>
+  </div>
+  <div class="card my-1" *ngFor="let history of historyService">
+    <div class="card-body">
+      <div class="modal-card">
+        <div class="history-service-container">
+          <span>C° de la moto: {{ history.ItemCode }}</span>
+          <span>Descripción: {{ history.ItemDescription }} </span>
+          <span>Chasis: {{ history.U_Chasis }} </span>
+          <span>Motor: {{ history.U_Motor }} </span>
+          <span *ngIf="history.InternalSerialNum"
+            >Serie: {{ history.InternalSerialNum }}
+          </span>
+        </div>
+        <div class="history-service-container-last">
+          <span
+            >Service ID:
+            <strong class="service-id">{{
+              history.ServiceCallID
+            }}</strong></span
+          >
+          <span
+            >Estado:
+            {{
+              history.Status === -1
+                ? "Cerrado"
+                : history.Status === -3
+                ? "Abierto"
+                : history.Status === -2
+                ? "Pendiente"
+                : history.Status === 2
+                ? "En proceso"
+                : "Desestimados"
+            }}</span
+          >
+          <span
+            >Resolución:
+            {{
+              history.Resolution !== null ? history.Resolution : "No cargado"
+            }}
+          </span>
+          <span>Fecha de creación: {{ history.CreationDate }} </span>
+          <span
+            >Fecha de cierre:
+            {{
+              history.ClosingDate === null ? "Aún abierto" : history.ClosingDate
+            }}</span
+          >
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="pt-4 px-3" *ngIf="historyService.length <= 0 && msg !== null">
+  <div class="title-history">
+    <h4>Historial de servicios del cliente</h4>
+    <i
+      class="fa fa-times"
+      role="button"
+      aria-hidden="true"
+      (click)="dismiss()"
+    ></i>
+  </div>
+  <div class="card my-1">
+    <div class="card-body">
+      <h5>{{ msg }}</h5>
+    </div>
+  </div>
+</div>

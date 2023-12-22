@@ -1,0 +1,41 @@
+@import "../../../yuhmak.scss";
+
+.title-history {
+  @include flex-row-start-center;
+  i {
+    margin-left: 20px;
+    font-size: 28px;
+    font-weight: bold;
+    &:hover {
+        color: var(--paradigm-error)
+    }
+  }
+}
+
+.modal-card {
+  @include flex-row-between;
+  margin-bottom: 10px;
+  padding: 10px !important;
+  color: var(--paradigm-text);
+  @include responsive("tab-port") {
+    @include flex-column-start;
+    padding: 5px !important;
+  }
+
+  .service-id {
+    color: var(--paradigm-blue);
+  }
+}
+
+.history-service-container {
+  @include flex-column-start;
+}
+
+.history-service-container-last {
+  @include flex-column-end;
+  text-align: end;
+  @include responsive("tab-port") {
+    @include flex-column-start;
+    text-align: start;
+  }
+}

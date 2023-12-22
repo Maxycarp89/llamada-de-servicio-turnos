@@ -1,0 +1,142 @@
+// WIDGETS STYLES //
+
+.widget {
+    position: relative;
+    min-height: 50px;
+    min-width: 150px;
+    max-height: 150px; 
+    max-width: 250px;
+    box-shadow: 0.065rem 0.065rem 0.3rem 0 rgb(201, 201, 201);
+    
+    .widget-body {
+        overflow: hidden;
+        border-bottom-right-radius: 5px;
+        border-bottom-left-radius: 5px;
+    }
+    
+    .widget-header {
+        padding: 5px 10px 0px 10px; 
+        margin-bottom: 2px;
+
+        h4 {
+            color:var(--paradigm-text-secondary); 
+            font-weight: 800; 
+            font-size: 1.8625rem;
+            margin: 0px;
+        }
+
+        h6 {
+            color:var(--paradigm-text-secondary);
+            font-size: 0.8625rem;
+            margin: 0px;
+        }
+    }
+}
+
+.widget::before {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background: linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(0,1,1,1) 100%);
+    opacity: 1;
+    content: "";
+    z-index: -1;
+}
+
+.widget-clear {
+    background-color: rgba(253, 253, 253);
+
+    .widget-header {
+        h4 {
+            color:var(--paradigm-text);
+        }
+
+        h6 {
+            color:var(--paradigm-text);
+        }
+    }
+}
+
+.widget-primary {
+    background-color: rgba(50, 31, 219);
+}
+
+.widget-secondary { 
+    background-color: rgba(157, 165, 177);
+}
+
+.widget-light {
+    background-color: rgba(235, 237, 239);
+    
+    .widget-header {
+        h4 {
+            color: var(--paradigm-text); 
+        }
+    
+        h6 {
+            color: var(--paradigm-text);
+        }
+    }
+}
+
+.widget-dark {
+    background-color: rgba(79, 93, 115);
+    color:rgb(29, 29, 31);
+}
+
+.widget-info {
+    background-color: rgba(51, 153, 255);
+}
+
+.widget-success {
+    background-color: var(--paradigm-success);
+}
+
+.widget-warning {
+    background-color: var(--paradigm-warning);
+}
+
+.widget-danger {
+    background-color: var(--paradigm-error);
+}
+
+.widget-error {
+    background-color: rgba(235, 237, 239);
+    
+    .widget-header {
+        h4 {
+            color:var(--paradigm-error);
+        }
+
+        h6 {
+            color:var(--paradigm-error);
+        }
+    }
+}
+
+.widget-loading {
+    background-color: rgba(235, 237, 239);
+    min-height: 100px;
+    min-width: 200px;
+    max-height: 150px; 
+    max-width: 250px;
+
+    .loading {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 3.5625rem;
+    }
+
+    .widget-header {
+        h4 {
+            color: var(--paradigm-text); 
+        }
+
+        h6 {
+            color: var(--paradigm-text);
+        }
+    }
+}

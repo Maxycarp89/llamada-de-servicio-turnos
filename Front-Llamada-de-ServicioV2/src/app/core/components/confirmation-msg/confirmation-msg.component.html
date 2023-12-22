@@ -1,0 +1,43 @@
+<div class="py-4 px-3">
+  <div class="pb-2">
+    <h4>{{ title }}</h4>
+  </div>
+  <div class="pb-2 w-100">
+    <h5>Aviso</h5>
+    <ul>
+      <li class="advice-message">
+        Controlar que se haya cargado la cantidad correcta de los items
+        seleccionados. Ten en cuenta que puede ingresar decimales también en la
+        carga de la cantidad (Esto se aplica mayormente a la carga de aceite, en
+        ocasiones no se usa el litro y quizás se usa una parte del litro).
+        Ejemplo: 0.5
+      </li>
+    </ul>
+    <div class="advice-message-error">
+      En caso de que la cantidad este cargada de manera correcta, confirmar para
+      realizar la creación/edición del servicio. En caso contrario, hacer la
+      correción de la cantidad en la sección de operaciones.
+    </div>
+  </div>
+  <app-table
+    [headers]="['Items Seleccionados', 'Cantidad']"
+    *ngIf="sales && sales.length > 0"
+  >
+    <tr class="data-row" *ngFor="let item of sales">
+      <td class="item-col-1">
+        {{ item.ItemCode }} - {{ item.ItemName }} |
+        {{ item.MeasureUnit }}
+      </td>
+      <td class="item-col-2">
+        {{ item.Quantity }}
+      </td>
+    </tr>
+  </app-table>
+</div>
+
+<div class="pb-4 px-4 d-flex justify-content-end align-items-center">
+  <button type="button" class="btn" (click)="cancel()">Cancelar</button>
+  <button type="button" class="btn-paradigm" (click)="confirm()">
+    Confirmar
+  </button>
+</div>

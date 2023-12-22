@@ -1,0 +1,328 @@
+// Custom Theming for Angular Material
+// For more information: https://material.angular.io/guide/theming
+@use "@angular/material" as mat;
+// Plus imports for other components in your app.
+
+// Include the common styles for Angular Material. We include this here so that you only
+// have to load a single css file for Angular Material in your app.
+// Be sure that you only ever include this mixin once!
+@include mat.core();
+
+// Define the palettes for your theme using the Material Design palettes available in palette.scss
+// (imported above). For each palette, you can optionally specify a default, lighter, and darker
+// hue. Available color palettes: https://material.io/design/color/
+$Llamada-de-ServicioV2-primary: mat.define-palette(mat.$indigo-palette);
+$Llamada-de-ServicioV2-accent: mat.define-palette(
+  mat.$pink-palette,
+  A200,
+  A100,
+  A400
+);
+
+// The warn palette is optional (defaults to red).
+$Llamada-de-ServicioV2-warn: mat.define-palette(mat.$red-palette);
+
+// Create the theme object. A theme consists of configurations for individual
+// theming systems such as "color" or "typography".
+$Llamada-de-ServicioV2-theme: mat.define-light-theme(
+  (
+    color: (
+      primary: $Llamada-de-ServicioV2-primary,
+      accent: $Llamada-de-ServicioV2-accent,
+      warn: $Llamada-de-ServicioV2-warn,
+    ),
+  )
+);
+
+// Include theme styles for core and each component used in your app.
+// Alternatively, you can import and @include the theme mixins for each component
+// that you are using.
+@include mat.all-component-themes($Llamada-de-ServicioV2-theme);
+
+/* You can add global styles to this file, and also import other style files */
+/* Importing Bootstrap SCSS file. */
+@import "bootstrap/scss/bootstrap";
+
+/* Importing Google Titillium Web Fonts */
+@import url("https://fonts.googleapis.com/css2?family=Titillium+Web:ital,wght@0,200;0,300;0,400;0,600;0,700;1,300;1,400;1,600;1,700&display=swap");
+
+/* Importing Paradigm Components files */
+@import "src/assets/styles/toasts";
+@import "src/assets/styles/charts";
+@import "src/assets/styles/widgets";
+
+* {
+  margin: 0px;
+  padding: 0px;
+  box-sizing: border-box;
+}
+
+body {
+  position: relative;
+  font-family: "Titillium Web", sans-serif;
+}
+
+:root {
+  /** ParadigmCity **/
+  --paradigm-blue: #1c3184;
+  --paradigm-magenta: #d55281;
+  --paradigm-darkblue: #000040;
+  --paradigm-darkmagenta: #770d3d;
+  --paradigm-lightblue: #6767ff;
+  --paradigm-lightmagenta: #f793bf;
+  --paradigm-text: #1d1d1f;
+  --paradigm-text-secondary: #fcfcfc;
+  --paradigm-accent: #d55281;
+
+  --paradigm-success: rgba(46, 184, 92);
+  --paradigm-error: rgba(229, 83, 83);
+  --paradigm-warning: rgba(249, 177, 21);
+  --paradigm-info: rgba(51, 153, 255);
+  --paradigm-lightgrey: rgba(157, 165, 177);
+  --paradigm-darkgrey: rgba(79, 93, 115);
+
+  --paradigm-primary: var(--paradigm-blue);
+  --paradigm-secondary: var(--paradigm-magenta);
+  --paradigm-tertiary: var(--paradigm-darkblue);
+  --paradigm-quaternary: var(--paradigm-darkmagenta);
+}
+
+.active > .page-link {
+  background-color: #1c3184 !important;
+  border-color: #1c3184 !important;
+}
+
+.actions-container {
+  height: 100%;
+
+  .edit-action {
+    font-weight: bold;
+    margin-right: 15px;
+    cursor: pointer;
+    font-size: 18px;
+    &:hover {
+      color: var(--paradigm-lightblue);
+    }
+  }
+  .history-action {
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 18px;
+    margin-right: 15px;
+    &:hover {
+      color: var(--paradigm-error);
+    }
+  }
+
+  .ownership-action {
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 18px;
+    &:hover {
+      color: var(--paradigm-success);
+    }
+  }
+}
+
+.page-card {
+  padding: 3rem;
+  box-shadow: 1px 1px 10px rgba(230, 230, 230);
+}
+
+@media (max-width: 1024px) {
+  .page-card {
+    padding: 1.5rem;
+    box-shadow: 1px 1px 10px rgba(230, 230, 230);
+  }
+}
+
+@media (max-width: 1024px) {
+  .page-card {
+    padding: 1.2rem;
+    box-shadow: 1px 1px 10px rgba(230, 230, 230);
+  }
+}
+
+@media (max-width: 570px) {
+  .page-card {
+    padding: 1rem;
+    box-shadow: 1px 1px 10px rgba(230, 230, 230);
+  }
+}
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+.success {
+  background: #1de9b6 !important;
+}
+.fail {
+  background: #b00020;
+}
+
+.table-flush {
+  width: 100%;
+
+  .thead-light {
+    tr {
+      th {
+        .sortBy {
+          display: flex;
+          align-items: center;
+          text-decoration: none;
+          color: #8898aa;
+          text-transform: uppercase;
+          &:hover {
+            color: #969da6;
+          }
+        }
+      }
+    }
+  }
+}
+
+input[type="file"] {
+  display: none;
+}
+
+.custom-file-upload {
+  border: 1px solid #ccc;
+  display: inline-block;
+  padding: 6px 12px;
+  cursor: pointer;
+}
+
+.table-flush {
+  width: 100%;
+
+  .thead-light {
+    tr {
+      th {
+        .sortBy {
+          display: flex;
+          align-items: center;
+          text-decoration: none;
+          color: #8898aa;
+          text-transform: uppercase;
+          cursor: pointer;
+          &:hover {
+            color: #969da6;
+          }
+          i {
+            margin-right: 4px;
+          }
+        }
+      }
+    }
+  }
+}
+
+.table-row {
+  padding: 0.75rem;
+}
+
+.table-card {
+  padding-top: 0px !important;
+  padding-right: 0px !important;
+  padding-bottom: 0px !important;
+  padding-left: 0px !important;
+  box-shadow: 0.065rem 0.065rem 0.3rem 0 rgb(201, 201, 201);
+}
+
+.newattribute-card {
+  padding: 1.5rem;
+  box-shadow: 1px 1px 10px rgba(230, 230, 230);
+  margin: 2rem 2rem;
+}
+
+.custom-file-upload {
+  border: 1px solid #ccc;
+  border-radius: 7px;
+  display: flex;
+  align-items: center;
+  padding: 6px 12px;
+  cursor: pointer;
+  box-shadow: 0.065rem 0.065rem 0.3rem 0 rgb(201, 201, 201);
+}
+
+.tab-content {
+  overflow-y: auto;
+  height: calc(100vh - 20rem);
+}
+
+.form-group {
+  width: 100%;
+
+  label {
+    font-weight: 600;
+    padding-left: 2px;
+    color: var(--paradigm-darkgrey);
+  }
+
+  app-error-message {
+    label {
+      font-weight: 400;
+    }
+  }
+}
+
+.form-control {
+  line-height: 2;
+}
+
+.form-check-input {
+  width: 2.2rem !important;
+  height: 1.2rem !important;
+}
+
+.form-check-input:checked {
+  background-color: var(--paradigm-success) !important;
+  border-color: var(--paradigm-success) !important;
+}
+
+.accordion-button:not(.collapsed) {
+  background-color: transparent !important;
+}
+
+.btn-paradigm {
+  width: 8rem;
+  height: 3rem;
+  border: none;
+  outline: none;
+  border-radius: 7px;
+  cursor: pointer;
+  background-color: var(--paradigm-blue);
+  color: var(--paradigm-text-secondary);
+  margin: 0 0;
+  transition: 300ms ease-in-out;
+  &:hover {
+    background-color: var(--paradigm-magenta);
+  }
+  &:disabled {
+    background-color: #1c318481;
+    color: var(--paradigm-text-secondary);
+    pointer-events: none;
+  }
+}
+
+.btn-paradigm-secondary {
+  width: 6rem;
+  height: 2rem;
+  border: none;
+  outline: none;
+  border-radius: 7px;
+  cursor: pointer;
+  background-color: var(--paradigm-text-secondary);
+  color: var(--paradigm-text);
+  margin: 0 0;
+  transition: 300ms ease-in-out;
+}
+
+.btn-paradigm-secondary:hover {
+  background-color: var(--paradigm-superlightgrey);
+}
